@@ -1,0 +1,16 @@
+<div class="navbar navbar-expand navbar-dark bg-dark mb-4">
+  <div class="container">
+    <a routerLink="/" class="navbar-brand">Crypto King</a>
+    <div>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item" [routerLinkActive] = "['active']" [routerLinkActiveOptions] = "{exact: true}">
+            <a routerLink = "/" class="nav-link">Home</a>
+          </li>
+          <li class="nav-item" [routerLinkActive] = "['active']" [routerLinkActiveOptions] = "{exact: true}">
+              <a routerLink = "/currencies" class="nav-link">Currencies</a>
+            </li>
+        </ul>
+      </div>
+  </div>
+</div>
+
