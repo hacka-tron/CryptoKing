@@ -25,7 +25,7 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 
 ## Upcomming Features
 
-~~ * Add favorites feature in currencies tab ~~
+* ~~Add favorites feature in currencies tab~~
 * Create a wallet and the ability to buy coins on the currencies tab
 * Create a back-end for the app
 
