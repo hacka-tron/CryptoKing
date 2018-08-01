@@ -17,5 +17,6 @@ export interface Currency {
         }
     }
     hide?: boolean;
+    isFavorite?: boolean;
 
 }

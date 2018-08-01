@@ -5,6 +5,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+If compilation fails, remove the ".data" on line 20 of "app/services/currency.services" and then add it back after proper compilation.
 
 ## Code scaffolding
 
@@ -21,6 +22,12 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 ## Running end-to-end tests
 
 Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+
+## Upcomming Features
+
+~~ * Add favorites feature in currencies tab ~~
+* Create a wallet and the ability to buy coins on the currencies tab
+* Create a back-end for the app
 
 ## Further help
 

@@ -10,7 +10,7 @@ import { CurrenciesComponent } from './components/currencies/currencies.componen
 import { AppRoutingModule } from './/app-routing.module';
 import { HomeComponent } from './components/home/home.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
-import { MycoinComponent } from './components/mycoin/mycoin.component';
+import { MycoinsComponent } from './components/mycoins/mycoins.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +19,7 @@ import { MycoinComponent } from './components/mycoin/mycoin.component';
     CurrenciesComponent,
     HomeComponent,
     NotFoundComponent,
-    MycoinComponent
+    MycoinsComponent
   ],
   imports: [
     BrowserModule,
