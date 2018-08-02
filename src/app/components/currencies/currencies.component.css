@@ -1,6 +1,6 @@
-.addFav{
+.isFav{
     color: yellow;
 }
-.remFav {
-    color: red;
+.toBuy {
+    color: green;
 }

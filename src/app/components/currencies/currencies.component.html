@@ -1,36 +1,85 @@
-<div name = "favorites" class ="text-warning" *ngIf = "favorites?.length > 0">
-  <h2 class="ml-3">Favorites</h2>
+<div name="favorites" *ngIf="favNum > 0">
+  <h2 class="ml-3 text-warning">Favorites</h2>
   <ul class="list-unstyled m-3">
-    <li class="card card-body mb-2 bg-light" *ngFor="let favorite of favorites">
-      <h3 >{{favorite.name}}
-        <small class="float-right ml = 3">
-          <button (click)="removeFromFavorites(favorite)" class="btn-dark btn-sm btn">
-            <i class="fa fa-star remFav"></i>
-          </button>
-        </small>
-      </h3>
-    </li>
+    <div *ngFor="let currency of currencies">
+      <li class="card card-body mb-2 bg-light" *ngIf="currency.isFavorite">
+        <h3>#{{currency.rank}} {{currency.name}}
+          <small class="float-right">
+            <button (click)="toggleToBuy(currency)" class="btn-dark btn-sm btn">
+              <i class="fa fa-dollar" [ngClass]="currency.toBuy ? 'toBuy': ''"></i>
+            </button>
+            <button (click)="toggleFavorites(currency)" class="btn-dark btn-sm btn">
+              <i class="fa fa-star" [ngClass]="currency.isFavorite ? 'isFav': ''"></i>
+            </button>
+            <button (click)="toggleHide(currency)" class="btn-dark btn-sm">
+              <i [ngClass]="currency.hide ? 'fa fa-plus': 'fa fa-minus'"></i>
+            </button>
+          </small>
+        </h3>
+        <ul class="list-group" *ngIf="!currency.hide">
+          <li class="list-group-item">Value: {{currency.quotes.USD.price |currency}}</li>
+          <li class="list-group-item">Market Cap: {{currency.quotes.USD.market_cap |currency}}</li>
+          <li class="list-group-item">Value: {{currency.quotes.USD.volume_24h |currency}}</li>
+        </ul>
+        <ul class="list-group" *ngIf="currency.toBuy">
+          <li class="list-group-item">lil Test</li>
+        </ul>
+      </li>
+    </div>
   </ul>
 </div>
-<div name = "currencies">
+<div name="currencies">
   <h2 class="ml-3">Currencies</h2>
   <ul class="list-unstyled m-3">
-    <li class="card card-body mb-2 bg-light" *ngFor="let currency of currencies">
-      <h3>#{{currency.rank}} {{currency.name}}
-        <small class="float-right ml = 3">
-          <button [disabled] = "currency.isFavorite" [class.light] = "currency.isFavorite" (click)="addToFavorites(currency)" class="btn-dark btn-sm btn">
-            <i class="fa fa-star addFav"></i>
-          </button>
-          <button (click)="toggleHide(currency)" class="btn-dark btn-sm">
-            <i [ngClass]="currency.hide ? 'fa fa-plus': 'fa fa-minus'"></i>
-          </button>
-        </small>
-      </h3>
-      <ul class="list-group" *ngIf="!currency.hide">
-        <li class="list-group-item">Value: {{currency.quotes.USD.price |currency}}</li>
-        <li class="list-group-item">Market Cap: {{currency.quotes.USD.market_cap |currency}}</li>
-        <li class="list-group-item">Value: {{currency.quotes.USD.volume_24h |currency}}</li>
-      </ul>
-    </li>
+    <div *ngFor="let currency of currencies">
+      <li class="card card-body mb-2 bg-light" *ngIf="!currency.isFavorite">
+        <h3>#{{currency.rank}} {{currency.name}}
+          <small class="float-right ml = 3">
+            <button (click)="toggleToBuy(currency)" class="btn-dark btn-sm btn">
+              <i class="fa fa-dollar" [ngClass]="currency.toBuy ? 'toBuy': ''"></i>
+            </button>
+            <button (click)="toggleFavorites(currency)" class="btn-dark btn-sm btn">
+              <i class="fa fa-star" [ngClass]="currency.isFavorite ? 'isFav': ''"></i>
+            </button>
+            <button (click)="toggleHide(currency)" class="btn-dark btn-sm">
+              <i [ngClass]="currency.hide ? 'fa fa-plus': 'fa fa-minus'"></i>
+            </button>
+          </small>
+        </h3>
+        <ul class="list-group" *ngIf="!currency.hide">
+          <li class="list-group-item">Value: {{currency.quotes.USD.price |currency}}</li>
+          <li class="list-group-item">Market Cap: {{currency.quotes.USD.market_cap |currency}}</li>
+          <li class="list-group-item">Value: {{currency.quotes.USD.volume_24h |currency}}</li>
+        </ul>
+        <ul class="list-group" *ngIf="currency.toBuy">
+            <li class="list-group-item">lil Test</li>
+          </ul>
+      </li>
+    </div>
   </ul>
 </div>
+<!--div name="currencies">
+  <h2 class="ml-3" *ngIf = "!isFavorite">Currencies</h2>
+  <h2 class="ml-3" *ngIf = "isFavorite && favNum >0">Favorites</h2>
+  <ul class="list-unstyled m-3">
+    <div *ngFor="let currency of currencies">
+      <li class="card card-body mb-2 bg-light" *ngIf="currency.isFavorite==isFavorite">
+        <h3>#{{currency.rank}} {{currency.name}}
+          <small class="float-right ml = 3">
+            <button (click)="toggleFavorites(currency)" class="btn-dark btn-sm btn">
+              <i class="fa fa-star" [ngClass]="isFavorite ? 'remFav': 'addFav'"></i>
+            </button>
+            <button (click)="toggleHide(currency)" class="btn-dark btn-sm">
+              <i [ngClass]="currency.hide ? 'fa fa-plus': 'fa fa-minus'"></i>
+            </button>
+          </small>
+        </h3>
+        <ul class="list-group" *ngIf="!currency.hide">
+          <li class="list-group-item">Value: {{currency.quotes.USD.price |currency}}</li>
+          <li class="list-group-item">Market Cap: {{currency.quotes.USD.market_cap |currency}}</li>
+          <li class="list-group-item">Value: {{currency.quotes.USD.volume_24h |currency}}</li>
+        </ul>
+      </li>
+    </div>
+  </ul>
+</div-->
