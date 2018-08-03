@@ -23,10 +23,12 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
 
-## Upcomming Features
+## Upcoming Features
 
 * ~~Add favorites feature in currencies tab~~
-* Create a wallet and the ability to buy coins on the currencies tab
+* ~~Create a wallet and the ability to buy coins on the currencies tab~~
+* Add validation and fix technical debt
+* Add a bar graph to track the values of different currencies in real time!
 * Create a back-end for the app
 
 ## Further help

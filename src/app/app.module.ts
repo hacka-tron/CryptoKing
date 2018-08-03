@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {HttpClientModule} from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 import {CurrencyService} from './services/currency.service';
 
@@ -24,7 +25,8 @@ import { MycoinsComponent } from './components/mycoins/mycoins.component';
   imports: [
     BrowserModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule
   ],
   providers: [CurrencyService],
   bootstrap: [AppComponent]
