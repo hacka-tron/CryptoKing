@@ -17,6 +17,6 @@ export class CurrencyService {
   constructor(private http: HttpClient) { }
   
   getCurrencies() : Observable <Currency[]>{
-    return this.http.get(this.currenciesUrl).pipe(map(result => result.data));
+    return this.http.get<Currency[]>(this.currenciesUrl);
   } 
 }

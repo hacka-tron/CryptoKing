@@ -25,7 +25,7 @@ export class CurrenciesComponent implements OnInit {
 
   ngOnInit() {
     this.currencyService.getCurrencies().subscribe(currencies => {
-      this.currencies = currencies;
+      this.currencies = currencies["data"];
       this.currencies.unshift({
         id: 0,
         name: "Dollar",
@@ -57,29 +57,29 @@ export class CurrenciesComponent implements OnInit {
       ammount: 1000
     })
   }
-  findTotalValue(){
-    var totalVal=0;
-    for(var i=0; i < this.myCoins.length; i++){
+  findTotalValue() {
+    var totalVal = 0;
+    for (var i = 0; i < this.myCoins.length; i++) {
       totalVal = totalVal + this.myCoins[i].ammount * this.findItemById(this.myCoins[i].id, this.currencies).quotes.USD.price;
     }
     return totalVal;
   }
-  findItemById(id: number, inArr: Array<any>){
-    for(var i=0;i<inArr.length; i++){
-      if(inArr[i].id == id){
+  findItemById(id: number, inArr: Array<any>) {
+    for (var i = 0; i < inArr.length; i++) {
+      if (inArr[i].id == id) {
         return inArr[i];
       }
     }
     return null;
   }
 
-  buyCoin(id: number, ammount: number, value: number){
-    if(confirm("Are You Sure?")){
+  buyCoin(id: number, ammount: number, value: number) {
+    if (confirm("Are You Sure?")) {
       const curItem = this.findItemById(id, this.myCoins);
-      if(curItem == null){
-        this.myCoins.push({id, ammount});
-      }else{
-        curItem.ammount = curItem.ammount +ammount;
+      if (curItem == null) {
+        this.myCoins.push({ id, ammount });
+      } else {
+        curItem.ammount = curItem.ammount + ammount;
       }
       this.myCoins[0].ammount = this.myCoins[0].ammount - value;
       const cur = this.findItemById(id, this.currencies);

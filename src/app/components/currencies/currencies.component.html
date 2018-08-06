@@ -1,4 +1,4 @@
-<div class="container border border-dark rounded">
+<div class="container border border-dark rounded" *ngIf="currencies != undefined">
   <h3>My Coins</h3>
   <table class="table">
     <thead>
@@ -9,7 +9,7 @@
       </tr>
     </thead>
     <tbody *ngFor="let coin of myCoins">
-      <tr *ngIf = "coin !=null">
+      <tr>
         <th scope="row">{{findItemById(coin.id, currencies).name}}</th>
         <td>{{coin.ammount}}</td>
         <td>{{coin.ammount * findItemById(coin.id, currencies).quotes.USD.price}}</td>
@@ -46,18 +46,18 @@
           <li class="list-group-item">Value: {{currency.quotes.USD.volume_24h |currency}}</li>
         </ul>
         <form #coinForm="ngForm" *ngIf="currency.toBuy">
-            <div class="form-group">
-              <label>How much do you want to invest?($)</label>
-              <input [(ngModel)]="currency.beingBought" [ngClass]="{'is-invalid': curAmmount.errors && curAmmount.touched}" type="number"
-                class="form-control" name="curAmmount" #curAmmount="ngModel" required min="1" max="10" ng-pattern="integerval">
-              <p [hidden]="!(currency.beingBought > 0)">{{currency.symbol}}: {{currency.beingBought/currency.quotes.USD.price}}</p>
-              <div [hidden]="!curAmmount.errors?.required" class="invalid-feedback">Must add an input</div>
-              <div [hidden]="!curAmmount.errors?.min" class="invalid-feedback">Must add at least 1</div>
-              <div [hidden]="!curAmmount.errors?.max" class="invalid-feedback">Cannot add more than 10</div>
-              <button (click)="buyCoin(currency.id,(currency.beingBought/currency.quotes.USD.price), currency.beingBought)" [disabled]="!coinForm.form.valid"
-                class="btn btn-block mb-3">Buy Coin</button>
-            </div>
-          </form>
+          <div class="form-group">
+            <label>How much do you want to invest?($)</label>
+            <input [(ngModel)]="currency.beingBought" [ngClass]="{'is-invalid': curAmmount.errors && curAmmount.touched}" type="number"
+              class="form-control" name="curAmmount" #curAmmount="ngModel" required min="1" max="10" ng-pattern="integerval">
+            <p [hidden]="!(currency.beingBought > 0)">{{currency.symbol}}: {{currency.beingBought/currency.quotes.USD.price}}</p>
+            <div [hidden]="!curAmmount.errors?.required" class="invalid-feedback">Must add an input</div>
+            <div [hidden]="!curAmmount.errors?.min" class="invalid-feedback">Must add at least 1</div>
+            <div [hidden]="!curAmmount.errors?.max" class="invalid-feedback">Cannot add more than 10</div>
+            <button (click)="buyCoin(currency.id,(currency.beingBought/currency.quotes.USD.price), currency.beingBought)" [disabled]="!coinForm.form.valid"
+              class="btn btn-block mb-3">Buy Coin</button>
+          </div>
+        </form>
       </li>
     </div>
   </ul>
