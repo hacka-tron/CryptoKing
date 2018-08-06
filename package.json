@@ -20,10 +20,13 @@
     "@angular/platform-browser": "^6.0.3",
     "@angular/platform-browser-dynamic": "^6.0.3",
     "@angular/router": "^6.0.3",
+    "@types/chart.js": "^2.7.30",
     "bootstrap": "^4.0.0-beta.2",
+    "chart.js": "^2.7.2",
     "core-js": "^2.5.4",
     "font-awesome": "^4.7.0",
     "jquery": "^3.3.1",
+    "ng2-validation": "^4.2.0",
     "popper.js": "^1.14.3",
     "rxjs": "^6.0.0",
     "zone.js": "^0.8.26"

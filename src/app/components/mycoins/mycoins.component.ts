@@ -9,6 +9,7 @@ import { Currency } from '../models/Currencies';
 })
 export class MycoinsComponent implements OnInit {
   @Input() currencies: Currency[];
+  chart: any;
 
   constructor() { }
 
