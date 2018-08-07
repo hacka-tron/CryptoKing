@@ -1,1 +1,8 @@
-<h2 class= "text-info">Comming Soon!</h2>
+<div class="container">
+    <div [hidden]="!chart">
+        <canvas id="marketCap">{{ chart }}</canvas>
+    </div>
+    <div [hidden]="!chart">
+            <canvas id="volume24h">{{ chart }}</canvas>
+        </div>
+</div>

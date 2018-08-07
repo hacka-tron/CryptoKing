@@ -9,7 +9,7 @@ import { MycoinsComponent } from './components/mycoins/mycoins.component';
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'currencies', component: CurrenciesComponent },
-  { path: 'mycoins', component: MycoinsComponent},
+  { path: 'graphs', component: MycoinsComponent},
   { path: '**', component: NotFoundComponent }
 ];
 @NgModule({

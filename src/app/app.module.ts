@@ -2,7 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {HttpClientModule} from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { CustomFormsModule } from 'ng2-validation'
+import { CustomFormsModule } from 'ng2-validation';
+import {ChartModule} from 'primeng/chart';
 
 import {CurrencyService} from './services/currency.service';
 
@@ -28,7 +29,8 @@ import { MycoinsComponent } from './components/mycoins/mycoins.component';
     HttpClientModule,
     AppRoutingModule,
     FormsModule,
-    CustomFormsModule 
+    CustomFormsModule,
+    ChartModule 
   ],
   providers: [CurrencyService],
   bootstrap: [AppComponent]

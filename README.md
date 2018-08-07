@@ -27,8 +27,8 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 * ~~Add favorites feature in currencies tab~~
 * ~~Create a wallet and the ability to buy coins on the currencies tab~~
 * ~~Fix compilation issue and and loading issues~~
-* Add validation
-* Add a bar graph to track the values of different currencies in real time!
+* ~~Add validation~~ 
+* ~~Add a bar graph to track the values of different currencies in real time!~~
 * Condense favorites and currencies into one div 
 * Create a back-end for the app
 

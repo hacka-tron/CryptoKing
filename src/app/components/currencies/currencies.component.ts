@@ -54,7 +54,9 @@ export class CurrenciesComponent implements OnInit {
     })
     this.myCoins.push({
       id: 0,
-      ammount: 1000
+      ammount: 1000,
+      hide: true,
+      beingSold: 0
     })
   }
   findTotalValue() {
@@ -77,7 +79,7 @@ export class CurrenciesComponent implements OnInit {
     if (confirm("Are You Sure?")) {
       const curItem = this.findItemById(id, this.myCoins);
       if (curItem == null) {
-        this.myCoins.push({ id, ammount });
+        this.myCoins.push({ id, ammount, hide: true, beingSold: 0});
       } else {
         curItem.ammount = curItem.ammount + ammount;
       }
@@ -87,7 +89,19 @@ export class CurrenciesComponent implements OnInit {
       this.toggleToBuy(cur);
     }
   }
-  toggleHide(currency: Currency) {
+  sellCoin(id: number, ammount: number, value: number) {
+    if (confirm("Are You Sure?")) {
+      const curItem = this.findItemById(id, this.myCoins);
+      curItem.ammount = curItem.ammount - ammount;
+      this.myCoins[0].ammount = this.myCoins[0].ammount + value;
+      curItem.beingSold = 0;
+      this.toggleCoinHide(curItem);
+    }
+  }
+  toggleCoinHide(coin: Coin){
+    coin.hide = !coin.hide;
+  }
+  toggleCurrencyHide(currency: Currency) {
     if (currency.toBuy) {
       this.toggleToBuy(currency);
     }
@@ -96,7 +110,7 @@ export class CurrenciesComponent implements OnInit {
 
   toggleToBuy(currency: Currency) {
     if (!currency.hide) {
-      this.toggleHide(currency);
+      this.toggleCurrencyHide(currency);
     }
     currency.toBuy = !currency.toBuy;
   }

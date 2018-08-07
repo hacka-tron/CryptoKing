@@ -1,4 +1,6 @@
 export interface Coin {
     id: number,
-    ammount: number 
+    ammount: number, 
+    hide?: boolean,
+    beingSold?: number;
 }
