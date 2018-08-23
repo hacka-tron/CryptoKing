@@ -29,8 +29,12 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 * ~~Fix compilation issue and and loading issues~~
 * ~~Add validation~~ 
 * ~~Add a bar graph to track the values of different currencies in real time!~~
+* Have data persist upon reloads
+* Add login feature for currencies
+* Add the ability to choose the initial dollar ammount
+* Add graphs and tools to track portfolio 
 * Condense favorites and currencies into one div 
-* Create a back-end for the app
+
 
 ## Further help
 
