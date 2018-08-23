@@ -10,29 +10,36 @@
       </tr>
     </thead>
     <tbody *ngFor="let coin of myCoins">
-      <tr *ngIf="(coin.ammount * findItemById(coin.id, currencies).quotes.USD.price) > 1">
-        <th scope="row">{{findItemById(coin.id, currencies).name}}</th>
-        <td>{{coin.ammount}} </td>
-        <td>{{coin.ammount * findItemById(coin.id, currencies).quotes.USD.price}}</td>
-        <td>
-          <button (click)="toggleCoinHide(coin)" *ngIf="coin.id != 0" class="btn btn-danger">
-            <i class="fa fa-dollar"></i>
-          </button>
-          <form #sellForm="ngForm" *ngIf="!coin.hide">
-            <div class="form-group">
-              <label>How much currency do you want to sell?($)</label>
-              <input [(ngModel)]="coin.beingSold" [ngClass]="{'is-invalid': curSell.errors && curSell.touched}" type="number" class="form-control"
-                name="curSell" #curSell="ngModel" required min= "1" [max]="coin.ammount * findItemById(coin.id, currencies).quotes.USD.price" ng-pattern="integerval">
-              <p [hidden]="!(coin.beingSold > 0)">{{findItemById(coin.id, currencies).symbol}}: {{coin.beingSold/findItemById(coin.id, currencies).quotes.USD.price}}</p>
-              <div [hidden]="!curSell.errors?.required" class="invalid-feedback">Must add an input</div>
-              <div [hidden]="!curSell.errors?.min" class="invalid-feedback">You must sell atleast $1 worth of currency</div>
-              <div [hidden]="!curSell.errors?.max" class="invalid-feedback">You can only sell a maximum of {{coin.ammount}} {{findItemById(coin.id, currencies).name}}</div>
-              <button (click)="sellCoin(coin.id, coin.beingSold/findItemById(coin.id, currencies).quotes.USD.price, coin.beingSold)" [disabled]="!sellForm.form.valid"
-                class="btn btn-block mb-3">Sell Coin</button>
-            </div>
-          </form>
-        </td>
-      </tr>
+      <ng-template let-coinProp="propVariable" [ngTemplateOutletContext]="{ propVariable: findItemById(coin.id, coinProps) }"
+        [ngTemplateOutlet]="setCoinProp" #setCoinProp>
+        <tr *ngIf="(coin.ammount * findItemById(coin.id, currencies).quotes.USD.price) > 1">
+          <th scope="row">{{findItemById(coin.id, currencies).name}}</th>
+          <td>{{coin.ammount}} </td>
+          <td>{{coin.ammount * findItemById(coin.id, currencies).quotes.USD.price}}</td>
+          <td>
+            <button (click)="toggleCoinHide(coinProp)" *ngIf="coin.id != 0" class="btn btn-danger">
+              <i class="fa fa-dollar"></i>
+            </button>
+            <form #sellForm="ngForm" *ngIf="!coinProp.hide">
+              <div class="form-group">
+                <label>How much currency do you want to sell?($)</label>
+                <input [(ngModel)]="coinProp.beingSold" [ngClass]="{'is-invalid': curSell.errors && curSell.touched}" type="number" class="form-control"
+                  name="curSell" #curSell="ngModel" required min="1" [max]="coin.ammount * findItemById(coin.id, currencies).quotes.USD.price"
+                  ng-pattern="integerval">
+                <p [hidden]="!(coinProp.beingSold > 0)">{{findItemById(coin.id, currencies).symbol}}: {{coinProp.beingSold/findItemById(coin.id,
+                  currencies).quotes.USD.price}}
+                </p>
+                <div [hidden]="!curSell.errors?.required" class="invalid-feedback">Must add an input</div>
+                <div [hidden]="!curSell.errors?.min" class="invalid-feedback">You must sell atleast $1 worth of currency</div>
+                <div [hidden]="!curSell.errors?.max" class="invalid-feedback">You can only sell a maximum of {{coin.ammount}}
+                  {{findItemById(coin.id, currencies).name}}</div>
+                <button (click)="sellCoin(coin.id, coinProp.beingSold/findItemById(coin.id, currencies).quotes.USD.price, coinProp.beingSold)" [disabled]="!sellForm.form.valid"
+                  class="btn btn-block mb-3">Sell Coin</button>
+              </div>
+            </form>
+          </td>
+        </tr>
+      </ng-template>
     </tbody>
     <tr>
       <th scope="row">Total Value</th>
@@ -46,39 +53,43 @@
   <h2 class="ml-3 text-warning">Favorites</h2>
   <ul class="list-unstyled m-3">
     <div *ngFor="let currency of currencies">
-      <li class="card card-body mb-2 bg-light" *ngIf="currency.isFavorite">
-        <h3>#{{currency.rank}} {{currency.name}}
-          <small class="float-right">
-            <button (click)="toggleToBuy(currency)" class="btn-dark btn-sm btn">
-              <i class="fa fa-dollar" [ngClass]="currency.toBuy ? 'toBuy': ''"></i>
-            </button>
-            <button (click)="toggleFavorites(currency)" class="btn-dark btn-sm btn">
-              <i class="fa fa-star" [ngClass]="currency.isFavorite ? 'isFav': ''"></i>
-            </button>
-            <button (click)="toggleCurrencyHide(currency)" class="btn-dark btn-sm">
-              <i [ngClass]="currency.hide ? 'fa fa-plus': 'fa fa-minus'"></i>
-            </button>
-          </small>
-        </h3>
-        <ul class="list-group" *ngIf="!currency.hide">
-          <li class="list-group-item">Value: {{currency.quotes.USD.price |currency}}</li>
-          <li class="list-group-item">Market Cap: {{currency.quotes.USD.market_cap |currency}}</li>
-          <li class="list-group-item">24h Volume: {{currency.quotes.USD.volume_24h |currency}}</li>
-        </ul>
-        <form #coinForm="ngForm" *ngIf="currency.toBuy">
-          <div class="form-group">
-            <label>How much do you want to invest?($)</label>
-            <input [(ngModel)]="currency.beingBought" [ngClass]="{'is-invalid': curAmmount.errors && curAmmount.touched}" type="number"
-              class="form-control" name="curAmmount" #curAmmount="ngModel" required min="1" [max]="myCoins[0].ammount" ng-pattern="integerval">
-            <p [hidden]="!(currency.beingBought > 0)">{{currency.symbol}}: {{currency.beingBought/currency.quotes.USD.price}}</p>
-            <div [hidden]="!curAmmount.errors?.required" class="invalid-feedback">Must add an input</div>
-            <div [hidden]="!curAmmount.errors?.min" class="invalid-feedback">You must spend atleast $1</div>
-            <div [hidden]="!curAmmount.errors?.max" class="invalid-feedback">You can only invest a maximum of ${{myCoins[0].ammount}}</div>
-            <button (click)="buyCoin(currency.id,(currency.beingBought/currency.quotes.USD.price), currency.beingBought)" [disabled]="!coinForm.form.valid"
-              class="btn btn-block mb-3">Buy Coin</button>
-          </div>
-        </form>
-      </li>
+      <ng-template let-currencyProp="propVariable" [ngTemplateOutletContext]="{ propVariable: findItemById(currency.id, currencyProps) }"
+        [ngTemplateOutlet]="setCurrencyProp" #setCurrencyProp>
+        <li class="card card-body mb-2 bg-light" *ngIf="currencyProp.isFavorite">
+          <h3>#{{currency.rank}} {{currency.name}}
+            <small class="float-right">
+              <button (click)="toggleToBuy(currencyProp)" class="btn-dark btn-sm btn">
+                <i class="fa fa-dollar" [ngClass]="currencyProp.toBuy ? 'toBuy': ''"></i>
+              </button>
+              <button (click)="toggleFavorites(currencyProp)" class="btn-dark btn-sm btn">
+                <i class="fa fa-star" [ngClass]="currencyProp.isFavorite ? 'isFav': ''"></i>
+              </button>
+              <button (click)="toggleCurrencyHide(currencyProp)" class="btn-dark btn-sm">
+                <i [ngClass]="currencyProp.hide ? 'fa fa-plus': 'fa fa-minus'"></i>
+              </button>
+            </small>
+          </h3>
+          <ul class="list-group" *ngIf="!currencyProp.hide">
+            <li class="list-group-item">Value: {{currency.quotes.USD.price |currency}}</li>
+            <li class="list-group-item">Market Cap: {{currency.quotes.USD.market_cap |currency}}</li>
+            <li class="list-group-item">24h Volume: {{currency.quotes.USD.volume_24h |currency}}</li>
+          </ul>
+          <form #coinForm="ngForm" *ngIf="currencyProp.toBuy">
+            <div class="form-group">
+              <label>How much do you want to invest?($)</label>
+              <input [(ngModel)]="currencyProp.beingBought" [ngClass]="{'is-invalid': curAmmount.errors && curAmmount.touched}" type="number"
+                class="form-control" name="curAmmount" #curAmmount="ngModel" required min="1" [max]="myCoins[0].ammount" ng-pattern="integerval">
+              <p [hidden]="!(currencyProp.beingBought > 0)">{{currency.symbol}}: {{findItemById(currency.id, currencyProps).beingBought/currency.quotes.USD.price}}
+              </p>
+              <div [hidden]="!curAmmount.errors?.required" class="invalid-feedback">Must add an input</div>
+              <div [hidden]="!curAmmount.errors?.min" class="invalid-feedback">You must spend at least $1</div>
+              <div [hidden]="!curAmmount.errors?.max" class="invalid-feedback">You can only invest a maximum of ${{myCoins[0].ammount}}</div>
+              <button (click)="buyCoin(currency.id,(currencyProp.beingBought/currency.quotes.USD.price))" [disabled]="!coinForm.form.valid"
+                class="btn btn-block mb-3">Buy Coin</button>
+            </div>
+          </form>
+        </li>
+      </ng-template>
     </div>
   </ul>
 </div>
@@ -86,65 +97,43 @@
   <h2 class="ml-3">Currencies</h2>
   <ul class="list-unstyled m-3">
     <div *ngFor="let currency of currencies">
-      <li class="card card-body mb-2 bg-light" *ngIf="!currency.isFavorite && currency.id>0">
-        <h3>#{{currency.rank}} {{currency.name}}
-          <small class="float-right ml = 3">
-            <button (click)="toggleToBuy(currency)" class="btn-dark btn-sm btn">
-              <i class="fa fa-dollar" [ngClass]="currency.toBuy ? 'toBuy': ''"></i>
-            </button>
-            <button (click)="toggleFavorites(currency)" class="btn-dark btn-sm btn">
-              <i class="fa fa-star" [ngClass]="currency.isFavorite ? 'isFav': ''"></i>
-            </button>
-            <button (click)="toggleCurrencyHide(currency)" class="btn-dark btn-sm">
-              <i [ngClass]="currency.hide ? 'fa fa-plus': 'fa fa-minus'"></i>
-            </button>
-          </small>
-        </h3>
-        <ul class="list-group" *ngIf="!currency.hide">
-          <li class="list-group-item">Value: {{currency.quotes.USD.price |currency}}</li>
-          <li class="list-group-item">Market Cap: {{currency.quotes.USD.market_cap |currency}}</li>
-          <li class="list-group-item">24h Volume: {{currency.quotes.USD.volume_24h |currency}}</li>
-        </ul>
-        <form #coinForm="ngForm" *ngIf="currency.toBuy">
-          <div class="form-group">
-            <label>How much do you want to invest?($)</label>
-            <input [(ngModel)]="currency.beingBought" [ngClass]="{'is-invalid': curAmmount.errors && curAmmount.touched}" type="number"
-              class="form-control" name="curAmmount" #curAmmount="ngModel" required min="1" [max]="myCoins[0].ammount" ng-pattern="integerval">
-            <p [hidden]="!(currency.beingBought > 0)">{{currency.symbol}}: {{currency.beingBought/currency.quotes.USD.price}}</p>
-            <div [hidden]="!curAmmount.errors?.required" class="invalid-feedback">Must add an input</div>
-            <div [hidden]="!curAmmount.errors?.min" class="invalid-feedback">You must spend atleast $1</div>
-            <div [hidden]="!curAmmount.errors?.max" class="invalid-feedback">You can only invest a maximum of ${{myCoins[0].ammount}}</div>
-            <button (click)="buyCoin(currency.id,(currency.beingBought/currency.quotes.USD.price), currency.beingBought)" [disabled]="!coinForm.form.valid"
-              class="btn btn-block mb-3">Buy Coin</button>
-          </div>
-        </form>
-
-      </li>
+      <ng-template let-currencyProp="propVariable" [ngTemplateOutletContext]="{ propVariable: findItemById(currency.id, currencyProps) }"
+        [ngTemplateOutlet]="setCurrencyProp" #setCurrencyProp>
+        <li class="card card-body mb-2 bg-light" *ngIf="!currencyProp.isFavorite && currency.id>0">
+          <h3>#{{currency.rank}} {{currency.name}}
+            <small class="float-right">
+              <button (click)="toggleToBuy(currencyProp)" class="btn-dark btn-sm btn">
+                <i class="fa fa-dollar" [ngClass]="currencyProp.toBuy ? 'toBuy': ''"></i>
+              </button>
+              <button (click)="toggleFavorites(currencyProp)" class="btn-dark btn-sm btn">
+                <i class="fa fa-star" [ngClass]="currencyProp.isFavorite ? 'isFav': ''"></i>
+              </button>
+              <button (click)="toggleCurrencyHide(currencyProp)" class="btn-dark btn-sm">
+                <i [ngClass]="currencyProp.hide ? 'fa fa-plus': 'fa fa-minus'"></i>
+              </button>
+            </small>
+          </h3>
+          <ul class="list-group" *ngIf="!currencyProp.hide">
+            <li class="list-group-item">Value: {{currency.quotes.USD.price |currency}}</li>
+            <li class="list-group-item">Market Cap: {{currency.quotes.USD.market_cap |currency}}</li>
+            <li class="list-group-item">24h Volume: {{currency.quotes.USD.volume_24h |currency}}</li>
+          </ul>
+          <form #coinForm="ngForm" *ngIf="currencyProp.toBuy">
+            <div class="form-group">
+              <label>How much do you want to invest?($)</label>
+              <input [(ngModel)]="currencyProp.beingBought" [ngClass]="{'is-invalid': curAmmount.errors && curAmmount.touched}" type="number"
+                class="form-control" name="curAmmount" #curAmmount="ngModel" required min="1" [max]="myCoins[0].ammount" ng-pattern="integerval">
+              <p [hidden]="!(currencyProp.beingBought > 0)">{{currency.symbol}}: {{findItemById(currency.id, currencyProps).beingBought/currency.quotes.USD.price}}
+              </p>
+              <div [hidden]="!curAmmount.errors?.required" class="invalid-feedback">Must add an input</div>
+              <div [hidden]="!curAmmount.errors?.min" class="invalid-feedback">You must spend at least $1</div>
+              <div [hidden]="!curAmmount.errors?.max" class="invalid-feedback">You can only invest a maximum of ${{myCoins[0].ammount}}</div>
+              <button (click)="buyCoin(currency.id,(currencyProp.beingBought/currency.quotes.USD.price))" [disabled]="!coinForm.form.valid"
+                class="btn btn-block mb-3">Buy Coin</button>
+            </div>
+          </form>
+        </li>
+      </ng-template>
     </div>
   </ul>
 </div>
-<!--div name="currencies">
-  <h2 class="ml-3" *ngIf = "!isFavorite">Currencies</h2>
-  <h2 class="ml-3" *ngIf = "isFavorite && favNum >0">Favorites</h2>
-  <ul class="list-unstyled m-3">
-    <div *ngFor="let currency of currencies">
-      <li class="card card-body mb-2 bg-light" *ngIf="currency.isFavorite==isFavorite">
-        <h3>#{{currency.rank}} {{currency.name}}
-          <small class="float-right ml = 3">
-            <button (click)="toggleFavorites(currency)" class="btn-dark btn-sm btn">
-              <i class="fa fa-star" [ngClass]="isFavorite ? 'remFav': 'addFav'"></i>
-            </button>
-            <button (click)="toggleHide(currency)" class="btn-dark btn-sm">
-              <i [ngClass]="currency.hide ? 'fa fa-plus': 'fa fa-minus'"></i>
-            </button>
-          </small>
-        </h3>
-        <ul class="list-group" *ngIf="!currency.hide">
-          <li class="list-group-item">Value: {{currency.quotes.USD.price |currency}}</li>
-          <li class="list-group-item">Market Cap: {{currency.quotes.USD.market_cap |currency}}</li>
-          <li class="list-group-item">Value: {{currency.quotes.USD.volume_24h |currency}}</li>
-        </ul>
-      </li>
-    </div>
-  </ul>
-</div-->

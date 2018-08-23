@@ -16,8 +16,4 @@ export interface Currency {
             percent_change_7d: number
         }
     }
-    hide?: boolean;
-    isFavorite?: boolean;
-    toBuy?: boolean;
-    beingBought?: number;
 }

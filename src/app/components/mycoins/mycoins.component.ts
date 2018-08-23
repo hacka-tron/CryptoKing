@@ -17,7 +17,8 @@ export class MycoinsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.currencyService.getCurrencies().subscribe(currencies => {
+    this.currencyService.getCurrencies();
+    this.currencyService.getUpdatedCurrenciesListner().subscribe(currencies => {
       this.currencies = currencies["data"];
       this.min = 0;
       this.max = 10;

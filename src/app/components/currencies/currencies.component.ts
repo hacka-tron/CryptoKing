@@ -1,68 +1,58 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { CurrencyService } from '../../services/currency.service';
+import { Component, OnInit, Input } from "@angular/core";
+import { CurrencyService } from "../../services/currency.service";
 
-import { Currency } from '../models/Currencies';
-import { Coin } from '../models/Coins';
+import { Currency } from "../models/Currencies";
+import { CurrencyProp } from "../models/CurrencyProps";
+import { Coin } from "../models/Coins";
+import { CoinProp } from "../models/CoinProps";
+
 
 
 @Component({
-  selector: 'app-currencies',
-  templateUrl: './currencies.component.html',
+  selector: "app-currencies",
+  templateUrl: "./currencies.component.html",
 
-  styleUrls: ['./currencies.component.css']
+  styleUrls: ["./currencies.component.css"]
 })
 export class CurrenciesComponent implements OnInit {
-  //@Input() isFavorite: boolean;
   currencies: Currency[];
+  currencyProps: CurrencyProp[] = [];
   myCoins: Coin[] = [];
+  coinProps: CoinProp[] = [];
   favNum: number = 0;
   curNum: number = 0;
 
-
-  constructor(
-    private currencyService: CurrencyService
-  ) { }
+  constructor(private currencyService: CurrencyService) {}
 
   ngOnInit() {
-    this.currencyService.getCurrencies().subscribe(currencies => {
-      this.currencies = currencies["data"];
-      this.currencies.unshift({
-        id: 0,
-        name: "Dollar",
-        symbol: "USD",
-        rank: 0,
-        circulating_supply: 0,
-        total_supply: 0,
-        max_supply: 0,
-        quotes: {
-          USD: {
-            price: 1,
-            volume_24h: 0,
-            market_cap: 0,
-            percent_change_1h: 0,
-            percent_change_24h: 0,
-            percent_change_7d: 0
-          }
-        }
-      })
+    this.currencyService.getCurrencies();
+    this.currencyService.getUpdatedCurrenciesListner().subscribe(currencies => {
+      this.currencies = currencies;
       this.currencies.forEach((cur, index) => {
-        cur.hide = true;
-        cur.isFavorite = false;
-        cur.toBuy = false;
-        cur.beingBought = 0;
-      })
-    })
-    this.myCoins.push({
-      id: 0,
-      ammount: 1000,
-      hide: true,
-      beingSold: 0
-    })
+        this.currencyProps.push({
+          id: cur.id,
+          hide: true,
+          isFavorite: false,
+          toBuy: false,
+          beingBought: 0
+        });
+      });
+    });
+
+    this.currencyService.getUpdatedCoinsListner().subscribe(coins =>{
+      this.myCoins = coins;
+    });
+
+    this.coinProps.push({id: 0, hide: true, beingSold:0});
   }
   findTotalValue() {
     var totalVal = 0;
     for (var i = 0; i < this.myCoins.length; i++) {
-      totalVal = totalVal + this.myCoins[i].ammount * this.findItemById(this.myCoins[i].id, this.currencies).quotes.USD.price;
+      totalVal =
+        totalVal +
+        this.myCoins[i].ammount *
+          this.findItemById(this.myCoins[i].id, this.currencies).quotes.USD
+            .price;
     }
     return totalVal;
   }
@@ -74,54 +64,46 @@ export class CurrenciesComponent implements OnInit {
     }
     return null;
   }
-
-  buyCoin(id: number, ammount: number, value: number) {
+  buyCoin(id: number, ammount: number) {
     if (confirm("Are You Sure?")) {
-      const curItem = this.findItemById(id, this.myCoins);
-      if (curItem == null) {
-        this.myCoins.push({ id, ammount, hide: true, beingSold: 0});
-      } else {
-        curItem.ammount = curItem.ammount + ammount;
+      this.currencyService.buyCoin(id, ammount);
+      if(this.findItemById(id, this.coinProps) == null){
+        this.coinProps.push({id: id, beingSold: 0, hide: true})
       }
-      this.myCoins[0].ammount = this.myCoins[0].ammount - value;
-      const cur = this.findItemById(id, this.currencies);
-      cur.beingBought = 0;
-      this.toggleToBuy(cur);
+      const curProp = this.findItemById(id, this.currencyProps);
+      curProp.beingBought = 0;
+      this.toggleToBuy(curProp);
     }
   }
-  sellCoin(id: number, ammount: number, value: number) {
+  sellCoin(id: number, ammount: number) {
     if (confirm("Are You Sure?")) {
-      const curItem = this.findItemById(id, this.myCoins);
-      curItem.ammount = curItem.ammount - ammount;
-      this.myCoins[0].ammount = this.myCoins[0].ammount + value;
-      curItem.beingSold = 0;
-      this.toggleCoinHide(curItem);
+      this.currencyService.sellCoin(id, ammount);
+      const coinProp = this.findItemById(id, this.coinProps);
+      coinProp.beingSold = 0;
+      this.toggleCoinHide(coinProp);
     }
   }
-  toggleCoinHide(coin: Coin){
-    coin.hide = !coin.hide;
+  toggleCoinHide(coinProp: CoinProp) {
+    coinProp.hide = !coinProp.hide;
   }
-  toggleCurrencyHide(currency: Currency) {
-    if (currency.toBuy) {
-      this.toggleToBuy(currency);
+  toggleCurrencyHide(currencyProp: CurrencyProp) {
+    if (currencyProp.toBuy) {
+      this.toggleToBuy(currencyProp);
     }
-    currency.hide = !currency.hide;
+    currencyProp.hide = !currencyProp.hide;
   }
-
-  toggleToBuy(currency: Currency) {
-    if (!currency.hide) {
-      this.toggleCurrencyHide(currency);
+  toggleToBuy(currencyProp: CurrencyProp) {
+    if (!currencyProp.hide) {
+      this.toggleCurrencyHide(currencyProp);
     }
-    currency.toBuy = !currency.toBuy;
+    currencyProp.toBuy = !currencyProp.toBuy;
   }
-
-  toggleFavorites(currency: Currency) {
-    currency.isFavorite = !currency.isFavorite;
-    if (currency.isFavorite) {
+  toggleFavorites(currencyProp: CurrencyProp) {
+    currencyProp.isFavorite = !currencyProp.isFavorite;
+    if (currencyProp.isFavorite) {
       this.favNum++;
     } else {
       this.favNum--;
     }
   }
 }
-
