@@ -1,7 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const Coin = require("./models/coin");
+
+const coinRoutes = require("./routes/coins");
 
 const app = express();
 
@@ -31,37 +32,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/api/coins", (req, res, next) => {
-  Coin.find().then(documents => {
-    res.status(200).json({
-      messsage: "Coins fetched succsfully",
-      coins: documents
-    });
-  });
-});
+app.use("/api/coins", coinRoutes);
 
-app.post("/api/coins", (req, res, next) => {
-  const coin = new Coin({
-    id: req.body.id,
-    ammount: req.body.ammount
-  });
-  console.log(coin);
-  coin.save();
-  res.status(201).json({
-    message: "Coin added successfully!",
-    coin: coin
-  });
-});
-
-app.put("/api/coins", (req, res, next) => {
-  const coin = {
-    ...req.body
-  };
-  Coin.updateOne({ id: req.body.id }, coin).then(result => {
-    res.status(200).json({
-      message: "Update success",
-      coin: coin
-    });
-  });
-});
 module.exports = app;

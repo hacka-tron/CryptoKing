@@ -13,18 +13,20 @@ import { CoinProp } from "../models/CoinProps";
   styleUrls: ["./currencies.component.css"]
 })
 export class CurrenciesComponent implements OnInit {
+  dollarAmmount: number;
   currencies: Currency[];
   currencyProps: CurrencyProp[] = [];
-  myCoins: Coin[] = [];
-  coinProps: CoinProp[] = [];
   favNum: number = 0;
   curNum: number = 0;
 
   constructor(private currencyService: CurrencyService) {}
 
   ngOnInit() {
-    this.currencyService.getCoins();
     this.currencyService.getCurrencies();
+    this.currencyService.getDollar();
+    this.currencyService.getUpdatedDollarListner().subscribe(dollar => {
+      this.dollarAmmount = dollar;
+    });
     this.currencyService.getUpdatedCurrenciesListner().subscribe(currencies => {
       this.currencies = currencies;
       this.currencies.forEach((cur, index) => {
@@ -37,58 +39,19 @@ export class CurrenciesComponent implements OnInit {
         });
       });
     });
-    this.currencyService.getUpdatedCoinsListner().subscribe(coins => {
-      this.myCoins = coins;
-      this.myCoins.forEach((cur, index) => {
-        this.coinProps.push({
-          id: cur.id,
-          hide: true,
-          beingSold: 0
-        });
-      });
-    });
   }
-  findTotalValue() {
-    var totalVal = 0;
-    for (var i = 0; i < this.myCoins.length; i++) {
-      totalVal =
-        totalVal +
-        this.myCoins[i].ammount *
-          this.findItemById(this.myCoins[i].id, this.currencies).quotes.USD
-            .price;
-    }
-    return totalVal;
-  }
-  findItemById(id: number, inArr: Array<any>) {
-    for (var i = 0; i < inArr.length; i++) {
-      if (inArr[i].id == id) {
-        return inArr[i];
-      }
-    }
-    return null;
+  private findItemById(id: number, inArr: Array<any>) {
+    return inArr[this.currencyService.findItemPos(id, inArr)];
   }
   buyCoin(id: number, ammount: number) {
     if (confirm("Are You Sure?")) {
       this.currencyService.buyCoin(id, ammount);
-      if (this.findItemById(id, this.coinProps) == null) {
-        this.coinProps.push({ id: id, beingSold: 0, hide: true });
-      }
       const curProp = this.findItemById(id, this.currencyProps);
       curProp.beingBought = 0;
       this.toggleToBuy(curProp);
     }
   }
-  sellCoin(id: number, ammount: number) {
-    if (confirm("Are You Sure?")) {
-      this.currencyService.sellCoin(id, ammount);
-      const coinProp = this.findItemById(id, this.coinProps);
-      coinProp.beingSold = 0;
-      this.toggleCoinHide(coinProp);
-    }
-  }
-  toggleCoinHide(coinProp: CoinProp) {
-    coinProp.hide = !coinProp.hide;
-  }
+
   toggleCurrencyHide(currencyProp: CurrencyProp) {
     if (currencyProp.toBuy) {
       this.toggleToBuy(currencyProp);

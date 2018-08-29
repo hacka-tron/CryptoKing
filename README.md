@@ -30,6 +30,7 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 * ~~Add validation~~ 
 * ~~Add a bar graph to track the values of different currencies in real time!~~
 * ~~Have data persist upon reloads~~
+* Finally adding comments!!(Probably shouldn't be a feature)
 * Add login feature for currencies
 * Add the ability to choose the initial dollar ammount
 * Add graphs and tools to track portfolio 

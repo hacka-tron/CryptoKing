@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Subject } from "rxjs";
+import { Subject, Observable } from "rxjs";
 import { map } from "rxjs/operators";
 
 import { Currency } from "../components/models/Currencies";
@@ -15,8 +15,10 @@ import { Coin } from "../components/models/Coins";
 export class CurrencyService {
   private currencies: Currency[] = [];
   private coins: Coin[] = [];
+  private dollar: number;
   private currenciesUpdated = new Subject<Currency[]>();
   private coinsUpdated = new Subject<Coin[]>();
+  private dollarUpdated = new Subject<number>();
   currenciesUrl: string =
     "https://api.coinmarketcap.com/v2/ticker/?structure=array";
 
@@ -144,7 +146,6 @@ export class CurrencyService {
       )
       .subscribe(responseData2 => {
         this.coins[0].ammount = responseData2.coin.ammount;
-        //this.coinsUpdated.next([...this.coins]);
       });
   }
 
@@ -152,7 +153,7 @@ export class CurrencyService {
     const curPos = this.findItemPos(id, this.coins);
     const coin: Coin = {
       id: id,
-      ammount: this.coins[curPos].ammount-ammount
+      ammount: this.coins[curPos].ammount - ammount
     };
     const value =
       this.currencies[this.findItemPos(id, this.currencies)].quotes.USD.price *
@@ -163,18 +164,18 @@ export class CurrencyService {
     };
 
     this.http
-        .put<{ message: string; coin: Coin }>(
-          "http://localhost:3000/api/coins",
-          coin
-        )
-        .subscribe(responseData => {
-          this.coins[curPos].ammount = responseData.coin.ammount;
-          this.updateDollar(newDollar);
-          this.coinsUpdated.next([...this.coins]);
-        });
+      .put<{ message: string; coin: Coin }>(
+        "http://localhost:3000/api/coins",
+        coin
+      )
+      .subscribe(responseData => {
+        this.coins[curPos].ammount = responseData.coin.ammount;
+        this.updateDollar(newDollar);
+        this.coinsUpdated.next([...this.coins]);
+      });
   }
 
-  private findItemPos(id: number, inArr: Array<any>) {
+  findItemPos(id: number, inArr: Array<any>) {
     for (var i = 0; i < inArr.length; i++) {
       if (inArr[i].id == id) {
         return i;
@@ -183,11 +184,25 @@ export class CurrencyService {
     return null;
   }
 
+  getDollar() {
+    return this.http
+      .get<{ id: number; ammount: number }>(
+        "http://localhost:3000/api/coins/" + 0
+      )
+      .subscribe(coinData => {
+        this.dollar = coinData.ammount;
+        this.dollarUpdated.next(this.dollar);
+      });
+  }
   getUpdatedCurrenciesListner() {
     return this.currenciesUpdated.asObservable();
   }
 
   getUpdatedCoinsListner() {
     return this.coinsUpdated.asObservable();
+  }
+
+  getUpdatedDollarListner() {
+    return this.dollarUpdated.asObservable();
   }
 }
