@@ -19,9 +19,9 @@ export class MycoinsComponent implements OnInit {
   ngOnInit() {
     this.currencyService.getCurrencies();
     this.currencyService.getUpdatedCurrenciesListner().subscribe(currencies => {
-      this.currencies = currencies["data"];
-      this.min = 0;
-      this.max = 10;
+      this.currencies = currencies;
+      this.min = 1;
+      this.max = 11;
 
       this.chart = new Chart("marketCap", {
         type: 'bar',

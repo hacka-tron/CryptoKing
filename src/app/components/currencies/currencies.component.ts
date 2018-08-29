@@ -6,8 +6,6 @@ import { CurrencyProp } from "../models/CurrencyProps";
 import { Coin } from "../models/Coins";
 import { CoinProp } from "../models/CoinProps";
 
-
-
 @Component({
   selector: "app-currencies",
   templateUrl: "./currencies.component.html",
@@ -25,6 +23,7 @@ export class CurrenciesComponent implements OnInit {
   constructor(private currencyService: CurrencyService) {}
 
   ngOnInit() {
+    this.currencyService.getCoins();
     this.currencyService.getCurrencies();
     this.currencyService.getUpdatedCurrenciesListner().subscribe(currencies => {
       this.currencies = currencies;
@@ -38,12 +37,16 @@ export class CurrenciesComponent implements OnInit {
         });
       });
     });
-
-    this.currencyService.getUpdatedCoinsListner().subscribe(coins =>{
+    this.currencyService.getUpdatedCoinsListner().subscribe(coins => {
       this.myCoins = coins;
+      this.myCoins.forEach((cur, index) => {
+        this.coinProps.push({
+          id: cur.id,
+          hide: true,
+          beingSold: 0
+        });
+      });
     });
-
-    this.coinProps.push({id: 0, hide: true, beingSold:0});
   }
   findTotalValue() {
     var totalVal = 0;
@@ -67,8 +70,8 @@ export class CurrenciesComponent implements OnInit {
   buyCoin(id: number, ammount: number) {
     if (confirm("Are You Sure?")) {
       this.currencyService.buyCoin(id, ammount);
-      if(this.findItemById(id, this.coinProps) == null){
-        this.coinProps.push({id: id, beingSold: 0, hide: true})
+      if (this.findItemById(id, this.coinProps) == null) {
+        this.coinProps.push({ id: id, beingSold: 0, hide: true });
       }
       const curProp = this.findItemById(id, this.currencyProps);
       curProp.beingBought = 0;

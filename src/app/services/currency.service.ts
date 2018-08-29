@@ -51,35 +51,127 @@ export class CurrencyService {
             }
           }
         });
-        const dollar = { id: 0, ammount: 1000, hide: true, beingSold: 0 };
-        this.coins.push(dollar);
-        this.coinsUpdated.next([...this.coins]);
         this.currenciesUpdated.next([...this.currencies]);
       });
   }
 
+  getCoins() {
+    this.http
+      .get<{ message: string; coins: Coin[] }>(
+        "http://localhost:3000/api/coins"
+      )
+      .pipe(
+        map(responseData => {
+          return responseData.coins.map(curCoin => {
+            return {
+              id: curCoin.id,
+              ammount: curCoin.ammount
+            };
+          });
+        })
+      )
+      .subscribe(transformedCoins => {
+        this.coins = transformedCoins;
+
+        if (this.coins.length == 0) {
+          const dollar = { id: 0, ammount: 1000 };
+          this.http
+            .post<{ message: string; coin: Coin }>(
+              "http://localhost:3000/api/coins",
+              dollar
+            )
+            .subscribe(responseData2 => {
+              const transformedCoin: Coin = {
+                id: responseData2.coin.id,
+                ammount: responseData2.coin.ammount
+              };
+              this.coins.push(transformedCoin);
+              this.coinsUpdated.next([...this.coins]);
+            });
+        }
+        this.coinsUpdated.next([...this.coins]);
+      });
+  }
+
   buyCoin(id: number, ammount: number) {
-    const curPos = this.findItemPos(id, this.coins);
-    if (curPos != null) {
-      this.coins[curPos].ammount = this.coins[curPos].ammount + ammount;
-    } else {
-      this.coins.push({ id: id, ammount: ammount });
-    }
+    const coin: Coin = {
+      id: id,
+      ammount: ammount
+    };
     const value =
       this.currencies[this.findItemPos(id, this.currencies)].quotes.USD.price *
       ammount;
-    this.coins[0].ammount = this.coins[0].ammount - value;
-    this.coinsUpdated.next([...this.coins]);
+    const newDollar: Coin = {
+      id: 0,
+      ammount: this.coins[0].ammount - value
+    };
+    const curPos = this.findItemPos(id, this.coins);
+    if (curPos != null) {
+      coin.ammount = this.coins[curPos].ammount + coin.ammount;
+      this.http
+        .put<{ message: string; coin: Coin }>(
+          "http://localhost:3000/api/coins",
+          coin
+        )
+        .subscribe(responseData => {
+          this.coins[curPos].ammount = responseData.coin.ammount;
+          this.updateDollar(newDollar);
+          this.coinsUpdated.next([...this.coins]);
+        });
+    } else {
+      this.http
+        .post<{ message: string; coin: Coin }>(
+          "http://localhost:3000/api/coins",
+          coin
+        )
+        .subscribe(responseData => {
+          const newCoin = {
+            id: responseData.coin.id,
+            ammount: responseData.coin.ammount
+          };
+          this.coins.push(newCoin);
+          this.updateDollar(newDollar);
+          this.coinsUpdated.next([...this.coins]);
+        });
+    }
+  }
+
+  private updateDollar(newDollar: Coin) {
+    this.http
+      .put<{ message: string; coin: Coin }>(
+        "http://localhost:3000/api/coins",
+        newDollar
+      )
+      .subscribe(responseData2 => {
+        this.coins[0].ammount = responseData2.coin.ammount;
+        //this.coinsUpdated.next([...this.coins]);
+      });
   }
 
   sellCoin(id: number, ammount: number) {
     const curPos = this.findItemPos(id, this.coins);
-    this.coins[curPos].ammount = this.coins[curPos].ammount - ammount;
+    const coin: Coin = {
+      id: id,
+      ammount: this.coins[curPos].ammount-ammount
+    };
     const value =
       this.currencies[this.findItemPos(id, this.currencies)].quotes.USD.price *
       ammount;
-    this.coins[0].ammount = this.coins[0].ammount + value;
-    this.coinsUpdated.next([...this.coins]);
+    const newDollar: Coin = {
+      id: 0,
+      ammount: this.coins[0].ammount + value
+    };
+
+    this.http
+        .put<{ message: string; coin: Coin }>(
+          "http://localhost:3000/api/coins",
+          coin
+        )
+        .subscribe(responseData => {
+          this.coins[curPos].ammount = responseData.coin.ammount;
+          this.updateDollar(newDollar);
+          this.coinsUpdated.next([...this.coins]);
+        });
   }
 
   private findItemPos(id: number, inArr: Array<any>) {
