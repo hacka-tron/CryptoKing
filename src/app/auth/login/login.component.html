@@ -1,0 +1,13 @@
+<div class="container card">
+  <form (submit)="onLogin(loginForm)" #loginForm="ngForm">
+    <div class="form-group card-body">
+      <h3 class="card-title">Login</h3>
+      <input name="email" class="form-control" ngModel type="email" placeholder="Email" #emailInput="ngModel" required
+        email>
+      <input name="password" class="form-control" ngModel type="password" placeholder="Password" #passwordInput="ngModel"
+        required>
+      <button class="btn btn-block mt-3" type="submit">Login!</button>
+      <p>Need to create an account? <a routerLink="/signup">Signup!</a></p>
+    </div>
+  </form>
+</div>

@@ -61,7 +61,6 @@ export class CurrencyGraphsComponent implements OnInit {
                 return "";
               },
               label: function(item) {
-                console.log(item);
                 return (
                   item["xLabel"] +
                   ": $" +

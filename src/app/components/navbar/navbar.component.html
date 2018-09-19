@@ -4,16 +4,28 @@
     <div>
       <ul class="navbar-nav ml-auto">
         <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}">
-          <a routerLink="/" class="nav-link">Home</a>
+          <a routerLink="/" class="nav-link">Currencies</a>
         </li>
-        <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}">
-          <a routerLink="/currencies" class="nav-link">Currencies</a>
-        </li>
-        <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}">
+        <li *ngIf="userIsAuthenticated" class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}">
           <a routerLink="/mycoins" class="nav-link">MyCoins</a>
         </li>
-        <li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}">
+        <!--li class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}">
           <a routerLink="/graphs" class="nav-link">Graphs</a>
+        </li-->
+        <li *ngIf="!userIsAuthenticated" class="nav-item" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}">
+          <a routerLink="/login" class="nav-link">Login</a>
+        </li>
+        <li *ngIf="userIsAuthenticated" class="nav-item dropdown" [routerLinkActive]="['active']"
+          [routerLinkActiveOptions]="{exact: true}">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false">
+            {{userName}}
+          </a>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+              <a class="dropdown-item" href="#">Help</a>
+            <div class="dropdown-divider"></div>
+            <a (click) = "onLogout()" class="dropdown-item" href="#">Logout</a>
+          </div>
         </li>
       </ul>
     </div>
