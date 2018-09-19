@@ -10,6 +10,7 @@ export class AppComponent implements OnInit {
   constructor(private authService: AuthService) {}
 
   ngOnInit() {
+    //Check if the user should be loged in
     this.authService.autoAuthUser();
   }
 }

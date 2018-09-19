@@ -20,6 +20,8 @@ mongoose
   });
 
 app.use(bodyParser.json());
+
+//Set access controls so no errors show up
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(

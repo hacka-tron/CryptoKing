@@ -15,6 +15,10 @@ import { CoinProp } from "../models/CoinProps";
 export class CurrenciesComponent implements OnInit {
   dollarAmmount: number;
   currencies: Currency[];
+
+  /*
+  *This is used to set the properties for each currency, and this isn't saved in the databse as it is going to be *reset anyway up reloads
+   */
   currencyProps: CurrencyProp[] = [];
   favNum: number = 0;
   curNum: number = 0;
@@ -29,6 +33,8 @@ export class CurrenciesComponent implements OnInit {
     });
     this.currencyService.getUpdatedCurrenciesListner().subscribe(currencies => {
       this.currencies = currencies;
+
+      //Adds the properties for the dollar currency
       this.currencies.forEach((cur, index) => {
         this.currencyProps.push({
           id: cur.id,

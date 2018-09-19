@@ -22,10 +22,12 @@ export class AuthService {
     return this.token;
   }
 
+  //This is used because "getUserNameListner()" isn't orignally trigered
   getUserName() {
     return this.userName;
   }
 
+  //This is used because "getAuthStatusListner()" isn't orignally trigered
   getIsAuth() {
     return this.isAuthenticated;
   }
@@ -34,6 +36,7 @@ export class AuthService {
     return this.userId;
   }
 
+  //Shows whether user is currently authenticated
   getAuthStatusListner() {
     return this.authStatusListner.asObservable();
   }
@@ -72,8 +75,10 @@ export class AuthService {
         response => {
           this.token = response.token;
           if (this.token) {
+            //Finds how long token is valid for, then timer is set
             const expiresInDuaration = response.expiresIn;
             this.setAuthTimer(expiresInDuaration);
+
             this.isAuthenticated = true;
             this.userName = response.userName;
             this.userId = response.userId;
@@ -105,6 +110,7 @@ export class AuthService {
     this.router.navigate(["/"]);
   }
 
+  //This is called whenever the app is started to see whether the token in local storage is still valid
   autoAuthUser() {
     const authInformation = this.getAuthData();
     if (!authInformation) {
@@ -129,6 +135,7 @@ export class AuthService {
     }, duration * 1000);
   }
 
+  //This information should be saved locally so logins can persist for a prolonged period of time
   private saveAuthData(token: string, expirateData: Date, userName: string, userId: string) {
     localStorage.setItem("token", token);
     localStorage.setItem("expiration", expirateData.toISOString());

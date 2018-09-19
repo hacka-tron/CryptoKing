@@ -18,6 +18,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    //Certains tabs should/shouldn't appear when loged in/out
     this.userIsAuthenticated = this.authService.getIsAuth();
     this.authListnerSubs = this.authService.getAuthStatusListner().subscribe(isAuthenticated => {
       this.userIsAuthenticated = isAuthenticated;

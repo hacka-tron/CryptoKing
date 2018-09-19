@@ -1,5 +1,6 @@
 const Coin = require("../models/coin");
 
+//Gets a list of all coins in database
 exports.getCoins = (req, res, next) => {
   Coin.find().then(documents => {
     res.status(200).json({
@@ -9,6 +10,7 @@ exports.getCoins = (req, res, next) => {
   });
 };
 
+//Gets a specified coin from the database
 exports.getCoin = (req, res, next) => {
   Coin.findOne({ id: req.params.id }).then(coin => {
     if (coin) {
@@ -19,6 +21,7 @@ exports.getCoin = (req, res, next) => {
   });
 };
 
+//Adds a new coin to the database
 exports.newCoin = (req, res, next) => {
   const coin = new Coin({
     id: req.body.id,
@@ -31,6 +34,7 @@ exports.newCoin = (req, res, next) => {
   });
 };
 
+//Update the value of a coin in a database
 exports.updateCoin = (req, res, next) => {
   const coin = {
     ...req.body

@@ -12,6 +12,8 @@ import { AuthService } from "./auth.service";
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
+
+  //Disallows certain pages when the user isn't logged in
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot

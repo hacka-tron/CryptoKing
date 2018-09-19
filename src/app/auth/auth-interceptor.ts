@@ -12,6 +12,8 @@ export class AuthInterceptor implements HttpInterceptor {
   private urlsToWhiteList: string[] = ["https://api.coinmarketcap.com"];
 
   constructor(private authService: AuthService) {}
+
+  //Intercepts http requests in order to add the token to them, unless that url is whitelisted
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     const authToken = this.authService.getToken();
     console.log(req.url);

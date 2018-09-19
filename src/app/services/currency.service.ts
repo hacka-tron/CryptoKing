@@ -6,19 +6,27 @@ import { map } from "rxjs/operators";
 import { Currency } from "../components/models/Currencies";
 import { Coin } from "../components/models/Coins";
 
-// const httpOptions = {
-//   headers: new HttpHeaders({ "Content-Type": "application/json" })
-// };
 @Injectable({
   providedIn: "root"
 })
 export class CurrencyService {
+  //This is the list of currencies that we get from the api
   private currencies: Currency[] = [];
+
+  //This is the list of currencies that we have purchased
   private coins: Coin[] = [];
+
   private dollar: number;
+
+  //Registers change in currencies
   private currenciesUpdated = new Subject<Currency[]>();
+
+  //Registers change in coins
   private coinsUpdated = new Subject<Coin[]>();
+
+  //Registers change in dollar
   private dollarUpdated = new Subject<number>();
+
   currenciesUrl: string =
     "https://api.coinmarketcap.com/v2/ticker/?structure=array";
 
@@ -29,11 +37,13 @@ export class CurrencyService {
       .get<{ data: Currency[]; metadata: any }>(this.currenciesUrl)
       .pipe(
         map(curData => {
+          //Only the .data attribute is what we are interested in
           return curData.data;
         })
       )
       .subscribe(extractedCurs => {
         this.currencies = extractedCurs;
+        //Add a default dollar currency at the front in order to perform conversions
         this.currencies.unshift({
           id: 0,
           name: "Dollar",
@@ -75,6 +85,7 @@ export class CurrencyService {
       .subscribe(transformedCoins => {
         this.coins = transformedCoins;
 
+        //Adds a dollar coin if coins doesnt have one yet. Default ammount of dollars is set to 1000
         if (this.coins.length == 0) {
           const dollar = { id: 0, ammount: 1000 };
           this.http
@@ -103,11 +114,15 @@ export class CurrencyService {
     const value =
       this.currencies[this.findItemPos(id, this.currencies)].quotes.USD.price *
       ammount;
+
+    //Sets the changed dollar ammount after the purchase of the coin
     const newDollar: Coin = {
       id: 0,
       ammount: this.coins[0].ammount - value
     };
     const curPos = this.findItemPos(id, this.coins);
+
+    //Checks if the user already owns some of this coin, in which case we update the coin ammount
     if (curPos != null) {
       coin.ammount = this.coins[curPos].ammount + coin.ammount;
       this.http
@@ -116,11 +131,12 @@ export class CurrencyService {
           coin
         )
         .subscribe(responseData => {
+          //These values are changed here to insure request was successful
           this.coins[curPos].ammount = responseData.coin.ammount;
           this.updateDollar(newDollar);
           this.coinsUpdated.next([...this.coins]);
         });
-    } else {
+    } else { //In this case the user is purchasing some of a coin for the first time
       this.http
         .post<{ message: string; coin: Coin }>(
           "http://localhost:3000/api/coins",
@@ -158,6 +174,8 @@ export class CurrencyService {
     const value =
       this.currencies[this.findItemPos(id, this.currencies)].quotes.USD.price *
       ammount;
+
+    //Sets new dollar ammount after sale
     const newDollar: Coin = {
       id: 0,
       ammount: this.coins[0].ammount + value
@@ -169,6 +187,7 @@ export class CurrencyService {
         coin
       )
       .subscribe(responseData => {
+        //These values are changed here to insure request was successful
         this.coins[curPos].ammount = responseData.coin.ammount;
         this.updateDollar(newDollar);
         this.coinsUpdated.next([...this.coins]);
