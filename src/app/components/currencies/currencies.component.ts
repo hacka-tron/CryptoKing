@@ -4,7 +4,7 @@ import { CurrencyService } from "../../services/currency.service";
 import { Currency } from "../models/Currencies";
 import { CurrencyProp } from "../models/CurrencyProps";
 import { Subscription } from "rxjs";
-import { AuthService } from "../../auth/auth.service";
+import { AuthService } from "../../services/auth.service";
 
 @Component({
   selector: "app-currencies",
