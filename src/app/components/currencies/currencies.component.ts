@@ -3,8 +3,6 @@ import { CurrencyService } from "../../services/currency.service";
 
 import { Currency } from "../models/Currencies";
 import { CurrencyProp } from "../models/CurrencyProps";
-import { Coin } from "../models/Coins";
-import { CoinProp } from "../models/CoinProps";
 import { Subscription } from "rxjs";
 import { AuthService } from "../../auth/auth.service";
 
@@ -15,7 +13,7 @@ import { AuthService } from "../../auth/auth.service";
   styleUrls: ["./currencies.component.css"]
 })
 export class CurrenciesComponent implements OnInit, OnDestroy {
-  dollarAmmount: number;
+  dollarAmmount: number = 0;
   currencies: Currency[];
 
   /*
@@ -43,9 +41,11 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
       });
 
     this.currencyService.getCurrencies();
-    this.currencyService.getDollar();
-    this.currencyService.getUpdatedDollarListner().subscribe(dollar => {
-      this.dollarAmmount = dollar;
+
+    this.currencyService.getCoins();
+
+    this.currencyService.getUpdatedCoinsListner().subscribe(coins => {
+      this.dollarAmmount = coins[0].ammount;
     });
     this.currencyService.getUpdatedCurrenciesListner().subscribe(currencies => {
       this.currencies = currencies;
@@ -62,9 +62,11 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
       });
     });
   }
+
   private findItemById(id: number, inArr: Array<any>) {
     return inArr[this.currencyService.findItemPos(id, inArr)];
   }
+
   buyCoin(id: number, ammount: number) {
     if (confirm("Are You Sure?")) {
       this.currencyService.buyCoin(id, ammount);
@@ -80,12 +82,14 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
     }
     currencyProp.hide = !currencyProp.hide;
   }
+
   toggleToBuy(currencyProp: CurrencyProp) {
     if (!currencyProp.hide) {
       this.toggleCurrencyHide(currencyProp);
     }
     currencyProp.toBuy = !currencyProp.toBuy;
   }
+
   toggleFavorites(currencyProp: CurrencyProp) {
     currencyProp.isFavorite = !currencyProp.isFavorite;
     if (currencyProp.isFavorite) {

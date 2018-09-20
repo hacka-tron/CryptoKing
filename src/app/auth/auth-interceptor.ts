@@ -16,7 +16,6 @@ export class AuthInterceptor implements HttpInterceptor {
   //Intercepts http requests in order to add the token to them, unless that url is whitelisted
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     const authToken = this.authService.getToken();
-    console.log(req.url);
     if (this.checkWhiteList(req.url)) {
       const authRequest = req.clone({
         headers: req.headers.set("Authorization", "Bearer " + authToken)

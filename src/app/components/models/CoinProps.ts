@@ -1,5 +1,5 @@
-export interface CoinProp{
-  id: number,
-  hide: boolean,
+export interface CoinProp {
+  id: number;
+  hide: boolean;
   beingSold: number;
 }

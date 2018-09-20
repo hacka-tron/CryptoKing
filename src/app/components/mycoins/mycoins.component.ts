@@ -5,7 +5,6 @@ import { CurrencyService } from "../../services/currency.service";
 import { Currency } from "../models/Currencies";
 import { Coin } from "../models/Coins";
 import { CoinProp } from "../models/CoinProps";
-import { Chart } from "chart.js";
 
 @Component({
   selector: "app-mycoins",
@@ -42,8 +41,7 @@ export class MycoinsComponent implements OnInit {
       totalVal =
         totalVal +
         this.myCoins[i].ammount *
-          this.findItemById(this.myCoins[i].id, this.currencies).USD
-            .price;
+          this.findItemById(this.myCoins[i].id, this.currencies).USD.price;
     }
     return totalVal;
   }

@@ -88,7 +88,12 @@ export class AuthService {
             const expirationDate = new Date(
               now.getTime() + expiresInDuaration * 1000
             );
-            this.saveAuthData(this.token, expirationDate,this.userName, this.userId);
+            this.saveAuthData(
+              this.token,
+              expirationDate,
+              this.userName,
+              this.userId
+            );
             this.router.navigate(["/"]);
           }
         },
@@ -136,10 +141,15 @@ export class AuthService {
   }
 
   //This information should be saved locally so logins can persist for a prolonged period of time
-  private saveAuthData(token: string, expirateData: Date, userName: string, userId: string) {
+  private saveAuthData(
+    token: string,
+    expirateData: Date,
+    userName: string,
+    userId: string
+  ) {
     localStorage.setItem("token", token);
     localStorage.setItem("expiration", expirateData.toISOString());
-    localStorage.setItem("userName", userName)
+    localStorage.setItem("userName", userName);
     localStorage.setItem("userId", userId);
   }
 
@@ -154,7 +164,7 @@ export class AuthService {
     const token = localStorage.getItem("token");
     const expirationDate = localStorage.getItem("expiration");
     const userId = localStorage.getItem("userId");
-    const userName = localStorage.getItem("userName")
+    const userName = localStorage.getItem("userName");
     if (!token || !expirationDate) {
       return;
     }

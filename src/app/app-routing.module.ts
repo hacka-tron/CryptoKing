@@ -10,7 +10,7 @@ import { LoginComponent } from "./auth/login/login.component";
 import { AuthGuard } from "./auth/auth-guard";
 
 const routes: Routes = [
-  { path: "", component: CurrenciesComponent},
+  { path: "", component: CurrenciesComponent },
   { path: "mycoins", component: MycoinsComponent, canActivate: [AuthGuard] },
   { path: "graphs", component: CurrencyGraphsComponent },
   { path: "signup", component: SignupComponent },

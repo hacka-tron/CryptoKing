@@ -16,16 +16,11 @@ export class CurrencyService {
   //This is the list of currencies that we have purchased
   private coins: Coin[] = [];
 
-  private dollar: number;
-
   //Registers change in currencies
   private currenciesUpdated = new Subject<Currency[]>();
 
   //Registers change in coins
   private coinsUpdated = new Subject<Coin[]>();
-
-  //Registers change in dollar
-  private dollarUpdated = new Subject<number>();
 
   currenciesUrl: string =
     "https://api.coinmarketcap.com/v2/ticker/?structure=array";
@@ -93,37 +88,20 @@ export class CurrencyService {
           return responseData.coins.map(curCoin => {
             return {
               id: curCoin.id,
-              ammount: curCoin.ammount
+              ammount: curCoin.ammount,
+              creator: curCoin.creator
             };
           });
         })
       )
       .subscribe(transformedCoins => {
         this.coins = transformedCoins;
-
-        //Adds a dollar coin if coins doesnt have one yet. Default ammount of dollars is set to 1000
-        if (this.coins.length == 0) {
-          const dollar = { id: 0, ammount: 1000 };
-          this.http
-            .post<{ message: string; coin: Coin }>(
-              "http://localhost:3000/api/coins",
-              dollar
-            )
-            .subscribe(responseData2 => {
-              const transformedCoin: Coin = {
-                id: responseData2.coin.id,
-                ammount: responseData2.coin.ammount
-              };
-              this.coins.push(transformedCoin);
-              this.coinsUpdated.next([...this.coins]);
-            });
-        }
         this.coinsUpdated.next([...this.coins]);
       });
   }
 
   buyCoin(id: number, ammount: number) {
-    const coin: Coin = {
+    const coin = {
       id: id,
       ammount: ammount
     };
@@ -132,7 +110,7 @@ export class CurrencyService {
       ammount;
 
     //Sets the changed dollar ammount after the purchase of the coin
-    const newDollar: Coin = {
+    const newDollar = {
       id: 0,
       ammount: this.coins[0].ammount - value
     };
@@ -149,8 +127,8 @@ export class CurrencyService {
         .subscribe(responseData => {
           //These values are changed here to insure request was successful
           this.coins[curPos].ammount = responseData.coin.ammount;
-          this.updateDollar(newDollar);
           this.coinsUpdated.next([...this.coins]);
+          this.updateDollar(newDollar);
         });
     } else {
       //In this case the user is purchasing some of a coin for the first time
@@ -162,29 +140,32 @@ export class CurrencyService {
         .subscribe(responseData => {
           const newCoin = {
             id: responseData.coin.id,
-            ammount: responseData.coin.ammount
+            ammount: responseData.coin.ammount,
+            creator: responseData.coin.creator
           };
           this.coins.push(newCoin);
-          this.updateDollar(newDollar);
           this.coinsUpdated.next([...this.coins]);
+          this.updateDollar(newDollar);
         });
     }
   }
 
-  private updateDollar(newDollar: Coin) {
+  private updateDollar(newDollar: { id: number; ammount: number }) {
     this.http
       .put<{ message: string; coin: Coin }>(
         "http://localhost:3000/api/coins",
         newDollar
       )
-      .subscribe(responseData2 => {
-        this.coins[0].ammount = responseData2.coin.ammount;
+      .subscribe(responseData => {
+        const newCoinAmmount = responseData.coin.ammount;
+        this.coins[0].ammount = newCoinAmmount;
+        this.coinsUpdated.next(this.coins);
       });
   }
 
   sellCoin(id: number, ammount: number) {
     const curPos = this.findItemPos(id, this.coins);
-    const coin: Coin = {
+    const coin = {
       id: id,
       ammount: this.coins[curPos].ammount - ammount
     };
@@ -193,7 +174,7 @@ export class CurrencyService {
       ammount;
 
     //Sets new dollar ammount after sale
-    const newDollar: Coin = {
+    const newDollar = {
       id: 0,
       ammount: this.coins[0].ammount + value
     };
@@ -220,25 +201,11 @@ export class CurrencyService {
     return null;
   }
 
-  getDollar() {
-    return this.http
-      .get<{ id: number; ammount: number }>(
-        "http://localhost:3000/api/coins/" + 0
-      )
-      .subscribe(coinData => {
-        this.dollar = coinData.ammount;
-        this.dollarUpdated.next(this.dollar);
-      });
-  }
   getUpdatedCurrenciesListner() {
     return this.currenciesUpdated.asObservable();
   }
 
   getUpdatedCoinsListner() {
     return this.coinsUpdated.asObservable();
-  }
-
-  getUpdatedDollarListner() {
-    return this.dollarUpdated.asObservable();
   }
 }

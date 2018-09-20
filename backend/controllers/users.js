@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
+const Coin = require("../models/coin");
 
 //Adds a user to the database
 exports.createUser = (req, res, next) => {
@@ -15,9 +16,16 @@ exports.createUser = (req, res, next) => {
     user
       .save()
       .then(result => {
+        const initialDollar = new Coin({
+          creator: req.body.email,
+          id: 0,
+          ammount: 1000
+        });
+        initialDollar.save();
         res.status(201).json({
           message: "User Created",
-          result: result
+          result: result,
+          initialDollar: initialDollar
         });
       })
       .catch(err => {
@@ -48,15 +56,14 @@ exports.userLogin = (req, res, next) => {
       }
       console.log("Loged in!");
       const token = jwt.sign(
-        { email: fetchedUser.email, userName:fetchedUser, userId: fetchedUser._id },
+        { email: fetchedUser.email },
         "secret_should_be_different",
         { expiresIn: "1h" }
       );
       res.status(200).json({
         token: token,
         expiresIn: 3600,
-        userName: fetchedUser.userName,
-        userId: fetchedUser._id
+        userName: fetchedUser.userName
       });
     })
     .catch(err => {
