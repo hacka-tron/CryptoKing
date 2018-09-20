@@ -1,10 +1,12 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, OnDestroy } from "@angular/core";
 import { CurrencyService } from "../../services/currency.service";
 
 import { Currency } from "../models/Currencies";
 import { CurrencyProp } from "../models/CurrencyProps";
 import { Coin } from "../models/Coins";
 import { CoinProp } from "../models/CoinProps";
+import { Subscription } from "rxjs";
+import { AuthService } from "../../auth/auth.service";
 
 @Component({
   selector: "app-currencies",
@@ -12,7 +14,7 @@ import { CoinProp } from "../models/CoinProps";
 
   styleUrls: ["./currencies.component.css"]
 })
-export class CurrenciesComponent implements OnInit {
+export class CurrenciesComponent implements OnInit, OnDestroy {
   dollarAmmount: number;
   currencies: Currency[];
 
@@ -22,10 +24,24 @@ export class CurrenciesComponent implements OnInit {
   currencyProps: CurrencyProp[] = [];
   favNum: number = 0;
   curNum: number = 0;
+  userIsAuthenticated = false;
+  userName: string;
+  private authListnerSubs: Subscription;
 
-  constructor(private currencyService: CurrencyService) {}
+  constructor(
+    private currencyService: CurrencyService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
+    //Certains buttons shouldn't appear when loged in/out
+    this.userIsAuthenticated = this.authService.getIsAuth();
+    this.authListnerSubs = this.authService
+      .getAuthStatusListner()
+      .subscribe(isAuthenticated => {
+        this.userIsAuthenticated = isAuthenticated;
+      });
+
     this.currencyService.getCurrencies();
     this.currencyService.getDollar();
     this.currencyService.getUpdatedDollarListner().subscribe(dollar => {
@@ -77,5 +93,9 @@ export class CurrenciesComponent implements OnInit {
     } else {
       this.favNum--;
     }
+  }
+
+  ngOnDestroy() {
+    this.authListnerSubs.unsubscribe();
   }
 }

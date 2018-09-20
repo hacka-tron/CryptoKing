@@ -35,7 +35,7 @@ export class CurrencyGraphsComponent implements OnInit {
             {
               label: "Market Cap",
               data: this.currencies
-                .map(cur => cur.quotes.USD.market_cap)
+                .map(cur => cur.USD.market_cap)
                 .slice(this.min, this.max),
               backgroundColor: this.sameColorArray(
                 "rgba(0, 0, 255, 0.3)",
@@ -45,7 +45,7 @@ export class CurrencyGraphsComponent implements OnInit {
             {
               label: "Volume 24h",
               data: this.currencies
-                .map(cur => cur.quotes.USD.volume_24h)
+                .map(cur => cur.USD.volume_24h)
                 .slice(this.min, this.max),
               backgroundColor: this.sameColorArray(
                 "rgba(0, 255, 0, 0.3)",

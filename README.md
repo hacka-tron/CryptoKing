@@ -32,10 +32,12 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 * ~~Have data persist upon reloads~~
 * ~~Finally adding comments!!(Probably shouldn't be a feature)~~
 * ~~Add login/user creation~~
+* Fix up sell coin UI
 * Add clear errors
 * Add individual user walets
 * Add the ability to choose the initial dollar ammount
 * Add graphs and tools to track portfolio 
+* Overall UI work(Will be expanded later, focusing on functionality at the moment)
 
 
 ## Further help

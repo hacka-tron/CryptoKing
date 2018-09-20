@@ -42,7 +42,7 @@ export class MycoinsComponent implements OnInit {
       totalVal =
         totalVal +
         this.myCoins[i].ammount *
-          this.findItemById(this.myCoins[i].id, this.currencies).quotes.USD
+          this.findItemById(this.myCoins[i].id, this.currencies).USD
             .price;
     }
     return totalVal;

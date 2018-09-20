@@ -11,7 +11,6 @@ import { AppComponent } from "./app.component";
 import { NavbarComponent } from "./components/navbar/navbar.component";
 import { CurrenciesComponent } from "./components/currencies/currencies.component";
 import { AppRoutingModule } from ".//app-routing.module";
-import { HomeComponent } from "./components/home/home.component";
 import { NotFoundComponent } from "./components/not-found/not-found.component";
 import { MycoinsComponent } from "./components/mycoins/mycoins.component";
 import { CurrencyGraphsComponent } from "./components/currency-graphs/currency-graphs.component";
@@ -25,7 +24,6 @@ import { AuthInterceptor } from "./auth/auth-interceptor";
     AppComponent,
     NavbarComponent,
     CurrenciesComponent,
-    HomeComponent,
     NotFoundComponent,
     MycoinsComponent,
     CurrencyGraphsComponent,

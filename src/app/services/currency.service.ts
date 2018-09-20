@@ -34,11 +34,29 @@ export class CurrencyService {
 
   getCurrencies() {
     return this.http
-      .get<{ data: Currency[]; metadata: any }>(this.currenciesUrl)
+      .get<{ data: any; metadata: any }>(this.currenciesUrl)
       .pipe(
         map(curData => {
           //Only the .data attribute is what we are interested in
-          return curData.data;
+          return curData.data.map(curCurrency => {
+            return {
+              id: curCurrency.id,
+              name: curCurrency.name,
+              symbol: curCurrency.symbol,
+              rank: curCurrency.rank,
+              circulating_supply: curCurrency.circulating_supply,
+              total_supply: curCurrency.total_supply,
+              max_supply: curCurrency.max_supply,
+              USD: {
+                price: curCurrency.quotes.USD.price,
+                volume_24h: curCurrency.quotes.USD.volume_24h,
+                market_cap: curCurrency.quotes.USD.market_cap,
+                percent_change_1h: curCurrency.quotes.USD.percent_change_1h,
+                percent_change_24h: curCurrency.quotes.USD.percent_change_24h,
+                percent_change_7d: curCurrency.quotes.USD.percent_change_7d
+              }
+            };
+          });
         })
       )
       .subscribe(extractedCurs => {
@@ -52,15 +70,13 @@ export class CurrencyService {
           circulating_supply: 0,
           total_supply: 0,
           max_supply: 0,
-          quotes: {
-            USD: {
-              price: 1,
-              volume_24h: 0,
-              market_cap: 0,
-              percent_change_1h: 0,
-              percent_change_24h: 0,
-              percent_change_7d: 0
-            }
+          USD: {
+            price: 1,
+            volume_24h: 0,
+            market_cap: 0,
+            percent_change_1h: 0,
+            percent_change_24h: 0,
+            percent_change_7d: 0
           }
         });
         this.currenciesUpdated.next([...this.currencies]);
@@ -112,7 +128,7 @@ export class CurrencyService {
       ammount: ammount
     };
     const value =
-      this.currencies[this.findItemPos(id, this.currencies)].quotes.USD.price *
+      this.currencies[this.findItemPos(id, this.currencies)].USD.price *
       ammount;
 
     //Sets the changed dollar ammount after the purchase of the coin
@@ -136,7 +152,8 @@ export class CurrencyService {
           this.updateDollar(newDollar);
           this.coinsUpdated.next([...this.coins]);
         });
-    } else { //In this case the user is purchasing some of a coin for the first time
+    } else {
+      //In this case the user is purchasing some of a coin for the first time
       this.http
         .post<{ message: string; coin: Coin }>(
           "http://localhost:3000/api/coins",
@@ -172,7 +189,7 @@ export class CurrencyService {
       ammount: this.coins[curPos].ammount - ammount
     };
     const value =
-      this.currencies[this.findItemPos(id, this.currencies)].quotes.USD.price *
+      this.currencies[this.findItemPos(id, this.currencies)].USD.price *
       ammount;
 
     //Sets new dollar ammount after sale
