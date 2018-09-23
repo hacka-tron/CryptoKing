@@ -16,6 +16,8 @@ export class CurrencyService {
   //This is the list of currencies that we have purchased
   private coins: Coin[] = [];
 
+  //This is a leaderBoard of highest overall value portfolios
+
   //Registers change in currencies
   private currenciesUpdated = new Subject<Currency[]>();
 
@@ -98,6 +100,10 @@ export class CurrencyService {
         this.coins = transformedCoins;
         this.coinsUpdated.next([...this.coins]);
       });
+  }
+
+  getLeaderBoard(){
+    return this.http.get<any>("http://localhost:3000/api/leaderboards");
   }
 
   buyCoin(id: number, ammount: number) {

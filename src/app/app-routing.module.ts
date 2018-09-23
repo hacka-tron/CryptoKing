@@ -8,6 +8,7 @@ import { CurrencyGraphsComponent } from "./components/currency-graphs/currency-g
 import { SignupComponent } from "./auth/signup/signup.component";
 import { LoginComponent } from "./auth/login/login.component";
 import { AuthGuard } from "./auth/auth-guard";
+import { LeaderBoardComponent } from "./components/leader-board/leader-board.component";
 
 const routes: Routes = [
   { path: "", component: CurrenciesComponent },
@@ -15,6 +16,7 @@ const routes: Routes = [
   { path: "graphs", component: CurrencyGraphsComponent },
   { path: "signup", component: SignupComponent },
   { path: "login", component: LoginComponent },
+  { path: "leaderboard", component: LeaderBoardComponent },
   { path: "**", component: NotFoundComponent }
 ];
 @NgModule({

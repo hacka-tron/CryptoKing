@@ -1,11 +1,12 @@
 const Coin = require("../models/coin");
+const User = require("../models/user");
 
 //Gets a list of all coins in database
 exports.getCoins = (req, res, next) => {
-  Coin.find({ creator: req.userData.email }).then(documents => {
+  Coin.find({ creator: req.userData.email }).then(coins => {
     res.status(200).json({
       messsage: "Coins fetched succsfully",
-      coins: documents
+      coins: coins
     });
   });
 };
@@ -22,6 +23,7 @@ exports.getCoin = (req, res, next) => {
     }
   );
 };
+
 
 //Adds a new coin to the database
 exports.newCoin = (req, res, next) => {

@@ -18,6 +18,7 @@ import { LoginComponent } from "./auth/login/login.component";
 import { SignupComponent } from "./auth/signup/signup.component";
 
 import { AuthInterceptor } from "./auth/auth-interceptor";
+import { LeaderBoardComponent } from './components/leader-board/leader-board.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { AuthInterceptor } from "./auth/auth-interceptor";
     MycoinsComponent,
     CurrencyGraphsComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    LeaderBoardComponent
   ],
   imports: [
     BrowserModule,
