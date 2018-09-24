@@ -1,5 +1,5 @@
 <div class="container card">
-  <form (submit)="onSignup(signupForm)" #signupForm="ngForm" *ngIf="!isLoading">
+  <form (submit)="onSignup(signupForm)" #signupForm="ngForm">
     <div class="form-group card-body">
       <h3 class="card-title">Account Creation</h3>
       <input name="userName" class="form-control" ngModel type="username" placeholder="User Name" #usernameInput="ngModel"

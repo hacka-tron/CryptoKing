@@ -3,6 +3,10 @@ import { HttpClient } from "@angular/common/http";
 import { Subject } from "rxjs";
 import { Router } from "@angular/router";
 import { AuthData } from "../auth/auth-data";
+import { environment } from "../../environments/environment";
+
+const BACKEND_USER_URL = environment.backendApiUrl +"/user";
+
 
 @Injectable({
   providedIn: "root"
@@ -51,7 +55,7 @@ export class AuthService {
       userName: userName,
       password: password
     };
-    this.http.post("http://localhost:3000/api/user/signup", authData).subscribe(
+    this.http.post(BACKEND_USER_URL + "/signup", authData).subscribe(
       response => {
         this.login(email, password);
       },
@@ -70,7 +74,7 @@ export class AuthService {
         expiresIn: number;
         userName: string;
         userId: string;
-      }>("http://localhost:3000/api/user/login", authData)
+      }>(BACKEND_USER_URL + "/login", authData)
       .subscribe(
         response => {
           this.token = response.token;

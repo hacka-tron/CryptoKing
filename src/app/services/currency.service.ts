@@ -3,8 +3,13 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Subject, Observable } from "rxjs";
 import { map } from "rxjs/operators";
 
+import { environment } from "../../environments/environment";
 import { Currency } from "../components/models/Currencies";
 import { Coin } from "../components/models/Coins";
+
+const BACKEND_COIN_URL = environment.backendApiUrl + "/coins";
+const BACKEND_LEADER_BOARD_URL = environment.backendApiUrl + "/leaderboards";
+const CURRENCIES_URL = environment.currencyApiUrl;
 
 @Injectable({
   providedIn: "root"
@@ -25,7 +30,7 @@ export class CurrencyService {
   private coinsUpdated = new Subject<Coin[]>();
 
   currenciesUrl: string =
-    "https://api.coinmarketcap.com/v2/ticker/?structure=array";
+  CURRENCIES_URL;
 
   constructor(private http: HttpClient) {}
 
@@ -83,7 +88,7 @@ export class CurrencyService {
   getCoins() {
     this.http
       .get<{ message: string; coins: Coin[] }>(
-        "http://localhost:3000/api/coins"
+        BACKEND_COIN_URL
       )
       .pipe(
         map(responseData => {
@@ -103,7 +108,7 @@ export class CurrencyService {
   }
 
   getLeaderBoard(){
-    return this.http.get<any>("http://localhost:3000/api/leaderboards");
+    return this.http.get<any>(BACKEND_LEADER_BOARD_URL);
   }
 
   buyCoin(id: number, ammount: number) {
@@ -127,7 +132,7 @@ export class CurrencyService {
       coin.ammount = this.coins[curPos].ammount + coin.ammount;
       this.http
         .put<{ message: string; coin: Coin }>(
-          "http://localhost:3000/api/coins",
+          BACKEND_COIN_URL,
           coin
         )
         .subscribe(responseData => {
@@ -140,7 +145,7 @@ export class CurrencyService {
       //In this case the user is purchasing some of a coin for the first time
       this.http
         .post<{ message: string; coin: Coin }>(
-          "http://localhost:3000/api/coins",
+          BACKEND_COIN_URL,
           coin
         )
         .subscribe(responseData => {
@@ -159,7 +164,7 @@ export class CurrencyService {
   private updateDollar(newDollar: { id: number; ammount: number }) {
     this.http
       .put<{ message: string; coin: Coin }>(
-        "http://localhost:3000/api/coins",
+        BACKEND_COIN_URL,
         newDollar
       )
       .subscribe(responseData => {
@@ -187,7 +192,7 @@ export class CurrencyService {
 
     this.http
       .put<{ message: string; coin: Coin }>(
-        "http://localhost:3000/api/coins",
+        BACKEND_COIN_URL,
         coin
       )
       .subscribe(responseData => {

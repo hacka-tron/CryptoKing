@@ -6,6 +6,15 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
+## Backend server
+
+Run `npm run start:server` to start the development backend. The backend will automatically reload if you change any backend files.
+
+## Production WebApp
+
+A deployed version of the app is available at `http://cryptoking.s3-website.us-east-2.amazonaws.com/`
+
+
 ## Code scaffolding
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.

@@ -4,13 +4,15 @@ const mongoose = require("mongoose");
 
 const coinRoutes = require("./routes/coins");
 const userRoutes = require("./routes/users");
-const leaderBoardRoutes = require("./routes/leader-boards")
+const leaderBoardRoutes = require("./routes/leader-boards");
 
 const app = express();
 
 mongoose
   .connect(
-    "mongodb+srv://Dude:n3T3K3IwRrujlZ95@cluster0-yianf.mongodb.net/crypto-data?retryWrites=true",
+    "mongodb+srv://Dude:" +
+      process.env.MONGO_ATLAS_PW +
+      "@cluster0-yianf.mongodb.net/crypto-data?retryWrites=true",
     { useNewUrlParser: true }
   )
   .then(() => {
@@ -38,6 +40,6 @@ app.use((req, res, next) => {
 
 app.use("/api/coins", coinRoutes);
 app.use("/api/user", userRoutes);
-app.use("/api/leaderboards", leaderBoardRoutes)
+app.use("/api/leaderboards", leaderBoardRoutes);
 
 module.exports = app;

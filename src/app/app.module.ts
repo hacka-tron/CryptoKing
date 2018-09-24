@@ -10,24 +10,25 @@ import { CurrencyService } from "./services/currency.service";
 import { AppComponent } from "./app.component";
 import { NavbarComponent } from "./components/navbar/navbar.component";
 import { CurrenciesComponent } from "./components/currencies/currencies.component";
+
 import { AppRoutingModule } from ".//app-routing.module";
 import { NotFoundComponent } from "./components/not-found/not-found.component";
 import { MycoinsComponent } from "./components/mycoins/mycoins.component";
-import { CurrencyGraphsComponent } from "./components/currency-graphs/currency-graphs.component";
 import { LoginComponent } from "./auth/login/login.component";
 import { SignupComponent } from "./auth/signup/signup.component";
 
 import { AuthInterceptor } from "./auth/auth-interceptor";
 import { LeaderBoardComponent } from './components/leader-board/leader-board.component';
+import { CurrencyGraphsComponent } from "./components/currency-graphs/currency-graphs.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
     CurrenciesComponent,
+    CurrencyGraphsComponent,
     NotFoundComponent,
     MycoinsComponent,
-    CurrencyGraphsComponent,
     LoginComponent,
     SignupComponent,
     LeaderBoardComponent
