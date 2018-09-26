@@ -42,11 +42,13 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
 
     this.currencyService.getCurrencies();
 
-    this.currencyService.getCoins();
+    if (this.userIsAuthenticated) {
+      this.currencyService.getCoins();
 
-    this.currencyService.getUpdatedCoinsListner().subscribe(coins => {
-      this.dollarAmmount = coins[0].ammount;
-    });
+      this.currencyService.getUpdatedCoinsListner().subscribe(coins => {
+        this.dollarAmmount = coins[0].ammount;
+      });
+    }
     this.currencyService.getUpdatedCurrenciesListner().subscribe(currencies => {
       this.currencies = currencies;
 
