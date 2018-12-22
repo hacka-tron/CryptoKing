@@ -16,16 +16,9 @@ exports.createUser = (req, res, next) => {
     user
       .save()
       .then(result => {
-        const initialDollar = new Coin({
-          creator: req.body.email,
-          id: 0,
-          ammount: 1000
-        });
-        initialDollar.save();
         res.status(201).json({
           message: "User Created",
-          result: result,
-          initialDollar: initialDollar
+          result: result
         });
       })
       .catch(err => {
@@ -68,7 +61,7 @@ exports.userLogin = (req, res, next) => {
     })
     .catch(err => {
       return res.status(401).json({
-        message: "Auth failed"
+        message: "Auth failed!"
       });
     });
 };

@@ -1,9 +1,13 @@
 const Coin = require("../models/coin");
-const User = require("../models/user");
+const Wallet = require("../models/wallet");
 
-//Gets a list of all coins in database
+const Currencies = require("./helpers/currencies");
+const Dollar = require("./helpers/dollar")
+const WalletController = require("./wallets");
+
+//Gets a list of all coins in a specified wallet
 exports.getCoins = (req, res, next) => {
-  Coin.find({ creator: req.userData.email }).then(coins => {
+  Coin.find({ wallet: req.body.wallet }).then(coins => {
     res.status(200).json({
       messsage: "Coins fetched succsfully",
       coins: coins
@@ -11,32 +15,34 @@ exports.getCoins = (req, res, next) => {
   });
 };
 
-//Gets a specified coin from the database
+//Gets the specified coin from the specified wallet
 exports.getCoin = (req, res, next) => {
-  Coin.findOne({ id: req.params.id, creator: req.userData.email }).then(
-    coin => {
-      if (coin) {
-        res.status(200).json(coin);
-      } else {
-        res.status(404).json({ message: "Coin not found!" });
-      }
+  Coin.findOne({ id: req.params.id, wallet: req.body.wallet }).then(coin => {
+    if (coin) {
+      res.status(200).json({ message: "Coin fetched sucessfully", coin: coin });
+    } else {
+      res.status(404).json({ message: "Coin not found!" });
     }
-  );
+  });
 };
 
-
-//Adds a new coin to the database
-exports.newCoin = (req, res, next) => {
+//Adds a new coin to the wallet, and subtracts the dollar value of that coin from the wallet dollars
+exports.buyCoin = (req, res, next) => {
   const coin = new Coin({
     id: req.body.id,
     ammount: req.body.ammount,
-    creator: req.userData.email
+    wallet: req.body.wallet
   });
-  coin.save().then(result => {
-    res.status(201).json({
-      message: "Coin added successfully!",
-      coin: result
-    });
+  Currencies.getCurrencies(function(currencies) {
+    price = Currencies.getCoinPrice(coin.id, currencies);
+    Dollar.updateDollars(-price, function(){
+      coin.save().then(coin => {
+        res.status(201).json({
+          message: "Coin added successfully!",
+          coin: coin
+        });
+      });
+    })
   });
 };
 

@@ -29,8 +29,7 @@ export class CurrencyService {
   //Registers change in coins
   private coinsUpdated = new Subject<Coin[]>();
 
-  currenciesUrl: string =
-  CURRENCIES_URL;
+  currenciesUrl: string = CURRENCIES_URL;
 
   constructor(private http: HttpClient) {}
 
@@ -87,9 +86,7 @@ export class CurrencyService {
 
   getCoins() {
     this.http
-      .get<{ message: string; coins: Coin[] }>(
-        BACKEND_COIN_URL
-      )
+      .get<{ message: string; coins: Coin[] }>(BACKEND_COIN_URL)
       .pipe(
         map(responseData => {
           return responseData.coins.map(curCoin => {
@@ -107,7 +104,7 @@ export class CurrencyService {
       });
   }
 
-  getLeaderBoard(){
+  getLeaderBoard() {
     return this.http.get<any>(BACKEND_LEADER_BOARD_URL);
   }
 
@@ -131,10 +128,7 @@ export class CurrencyService {
     if (curPos != null) {
       coin.ammount = this.coins[curPos].ammount + coin.ammount;
       this.http
-        .put<{ message: string; coin: Coin }>(
-          BACKEND_COIN_URL,
-          coin
-        )
+        .put<{ message: string; coin: Coin }>(BACKEND_COIN_URL, coin)
         .subscribe(responseData => {
           //These values are changed here to insure request was successful
           this.coins[curPos].ammount = responseData.coin.ammount;
@@ -144,10 +138,7 @@ export class CurrencyService {
     } else {
       //In this case the user is purchasing some of a coin for the first time
       this.http
-        .post<{ message: string; coin: Coin }>(
-          BACKEND_COIN_URL,
-          coin
-        )
+        .post<{ message: string; coin: Coin }>(BACKEND_COIN_URL, coin)
         .subscribe(responseData => {
           const newCoin = {
             id: responseData.coin.id,
@@ -163,10 +154,7 @@ export class CurrencyService {
 
   private updateDollar(newDollar: { id: number; ammount: number }) {
     this.http
-      .put<{ message: string; coin: Coin }>(
-        BACKEND_COIN_URL,
-        newDollar
-      )
+      .put<{ message: string; coin: Coin }>(BACKEND_COIN_URL, newDollar)
       .subscribe(responseData => {
         const newCoinAmmount = responseData.coin.ammount;
         this.coins[0].ammount = newCoinAmmount;
@@ -191,10 +179,7 @@ export class CurrencyService {
     };
 
     this.http
-      .put<{ message: string; coin: Coin }>(
-        BACKEND_COIN_URL,
-        coin
-      )
+      .put<{ message: string; coin: Coin }>(BACKEND_COIN_URL, coin)
       .subscribe(responseData => {
         //These values are changed here to insure request was successful
         this.coins[curPos].ammount = responseData.coin.ammount;

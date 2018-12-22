@@ -10,7 +10,7 @@ router.get("", checkAuth, CoinController.getCoins);
 
 router.get("/:id", checkAuth, CoinController.getCoin);
 
-router.post("", checkAuth, CoinController.newCoin);
+router.post("", checkAuth, CoinController.buyCoin);
 
 router.put("", checkAuth, CoinController.updateCoin);
 
