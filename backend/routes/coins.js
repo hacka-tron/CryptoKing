@@ -12,6 +12,4 @@ router.get("/:id", checkAuth, CoinController.getCoin);
 
 router.post("", checkAuth, CoinController.buyCoin);
 
-router.put("", checkAuth, CoinController.updateCoin);
-
 module.exports = router;

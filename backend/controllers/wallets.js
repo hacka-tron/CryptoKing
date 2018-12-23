@@ -52,3 +52,17 @@ exports.updateDollars = (req, res, next) => {
       console.log(error);
     });
 };
+
+exports.getCurDollars = (req, res, next) => {
+    Wallet.findById(req.userData.userId).then(wallet =>{
+      res.status(200).json({
+        message: "Dollars Found!",
+        dollars: wallet.dollars
+      });
+    })
+    .catch(err => {
+      return res.status(401).json({
+        message: "Couldn't Find Dollars"
+      });
+    });
+};

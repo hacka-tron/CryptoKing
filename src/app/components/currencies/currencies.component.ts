@@ -24,6 +24,7 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
   curNum: number = 0;
   userIsAuthenticated = false;
   userName: string;
+  curWallet: string
   private authListnerSubs: Subscription;
 
   constructor(
@@ -39,16 +40,17 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
       .subscribe(isAuthenticated => {
         this.userIsAuthenticated = isAuthenticated;
       });
-
-    this.currencyService.getCurrencies();
-
     if (this.userIsAuthenticated) {
-      this.currencyService.getCoins();
-
-      this.currencyService.getUpdatedCoinsListner().subscribe(coins => {
-        this.dollarAmmount = coins[0].ammount;
-      });
+      this.currencyService.getDollars;
+      this.currencyService.getUpdatedDollarListerner().subscribe(dollars => {
+        this.dollarAmmount = dollars;
+      })
     }
+    this.curWallet = this.authService.getActiveWallet();
+    this.authService.getActiveWalletListner().subscribe(activeWallet =>{
+      this.curWallet = activeWallet;
+    })
+    this.currencyService.getCurrencies();
     this.currencyService.getUpdatedCurrenciesListner().subscribe(currencies => {
       this.currencies = currencies;
 
@@ -69,9 +71,9 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
     return inArr[this.currencyService.findItemPos(id, inArr)];
   }
 
-  buyCoin(id: number, ammount: number) {
+  buyCoin(id: number, ammount: number, wallet: string) {
     if (confirm("Are You Sure?")) {
-      this.currencyService.buyCoin(id, ammount);
+      this.currencyService.buyCoin(id, ammount, wallet);
       const curProp = this.findItemById(id, this.currencyProps);
       curProp.beingBought = 0;
       this.toggleToBuy(curProp);

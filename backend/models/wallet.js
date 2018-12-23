@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const walletSchema = mongoose.Schema({
   owner: { type: String, ref: "User", required: true },
   name: {type: String, required: true},
-  dollars: {type: Number, min: 0}
+  dollars: {type: Number, min: 0, required: true}
 });
 
 walletSchema.index({ owner: 1});

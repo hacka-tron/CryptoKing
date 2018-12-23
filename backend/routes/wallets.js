@@ -14,6 +14,8 @@ router.post("", checkAuth, WalletController.createWallet);
 
 router.put("", checkAuth, WalletController.updateDollars);
 
+router.get("/dollars", WalletController.getCurDollars)
+
 //router.delete("/:id", checkAuth, WalletController.removeWallet)
 
 module.exports = router;

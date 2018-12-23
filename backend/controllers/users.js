@@ -4,10 +4,13 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const Coin = require("../models/coin");
 
+const Wallet = require("./helpers/wallet")
+
 //Adds a user to the database
 exports.createUser = (req, res, next) => {
   //Create a hash of the incoming password using bcrypt
   bcrypt.hash(req.body.password, 10).then(hash => {
+    Wallet.makeWallet(createdUser._id, "default", 1000, function(){
     const user = new User({
       email: req.body.email,
       userName: req.body.userName,
@@ -15,11 +18,13 @@ exports.createUser = (req, res, next) => {
     });
     user
       .save()
-      .then(result => {
-        res.status(201).json({
-          message: "User Created",
-          result: result
-        });
+      .then(createdUser => {
+
+          res.status(201).json({
+            message: "User Created",
+            user: createdUser
+          });
+        })
       })
       .catch(err => {
         res.status(500).json({
@@ -56,7 +61,9 @@ exports.userLogin = (req, res, next) => {
       res.status(200).json({
         token: token,
         expiresIn: 3600,
-        userName: fetchedUser.userName
+        userName: fetchedUser.userName,
+        userId: fetchedUser._id,
+        activeWallet: fetchedUser.curWallet
       });
     })
     .catch(err => {
@@ -65,3 +72,5 @@ exports.userLogin = (req, res, next) => {
       });
     });
 };
+
+

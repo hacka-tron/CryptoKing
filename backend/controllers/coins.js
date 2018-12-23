@@ -1,9 +1,7 @@
 const Coin = require("../models/coin");
-const Wallet = require("../models/wallet");
 
 const Currencies = require("./helpers/currencies");
-const Dollar = require("./helpers/dollar")
-const WalletController = require("./wallets");
+const Dollar = require("./helpers/wallet");
 
 //Gets a list of all coins in a specified wallet
 exports.getCoins = (req, res, next) => {
@@ -28,38 +26,32 @@ exports.getCoin = (req, res, next) => {
 
 //Adds a new coin to the wallet, and subtracts the dollar value of that coin from the wallet dollars
 exports.buyCoin = (req, res, next) => {
-  const coin = new Coin({
-    id: req.body.id,
-    ammount: req.body.ammount,
-    wallet: req.body.wallet
-  });
   Currencies.getCurrencies(function(currencies) {
-    price = Currencies.getCoinPrice(coin.id, currencies);
-    Dollar.updateDollars(-price, function(){
-      coin.save().then(coin => {
-        res.status(201).json({
-          message: "Coin added successfully!",
-          coin: coin
-        });
+    coinsToBuy = req.body.cost/Currencies.getCoinPrice(req.body.id, currencies);
+    Dollar.updateDollars(-req.body.cost, function() {
+      Coin.findOneAndUpdate(
+        { id: req.body.id, wallet: req.body.wallet },
+        { $inc: { ammount: coinsToBuy } }
+      ).then(updatedCoin => {
+        if (updatedCoin) {
+          res.status(201).json({
+            message: "Coin bought succesfully",
+            coin: updatedCoin
+          });
+        } else {
+          const coin = new Coin({
+            id: req.body.id,
+            ammount: req.body.ammount,
+            wallet: req.body.wallet
+          });
+          coin.save().then(createdCoin => {
+            res.status(201).json({
+              message: "Coin bought succesfully",
+              coin: createdCoin
+            });
+          });
+        }
       });
-    })
-  });
-};
-
-//Update the value of a coin in a database
-exports.updateCoin = (req, res, next) => {
-  const coin = {
-    ...req.body,
-    creator: req.userData.email
-  };
-  Coin.updateOne({ id: req.body.id, creator: req.userData.email }, coin)
-    .then(result => {
-      res.status(200).json({
-        message: "Update success",
-        coin: coin
-      });
-    })
-    .catch(error => {
-      console.log(error);
     });
+  });
 };
