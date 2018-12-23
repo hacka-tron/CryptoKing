@@ -1,6 +1,5 @@
-const Coin = require("../models/coin");
 const Wallet = require("../models/wallet");
-
+const User = require("../models/user");
 
 //Gets a list of all wallets in database that belong to the current user
 exports.getWallets = (req, res, next) => {
@@ -14,9 +13,9 @@ exports.getWallets = (req, res, next) => {
 
 //Gets a specified wallet from the database belonging to the current user
 exports.getWallet = (req, res, next) => {
-  Coin.findOne({ id: req.params.id, creator: req.userData.userId }).then(
-    coin => {
-      if (coin) {
+  Wallet.findOne({ id: req.params.id, creator: req.userData.userId }).then(
+    wallet => {
+      if (wallet) {
         res.status(200).json(wallet);
       } else {
         res.status(404).json({ message: "Wallet not found!" });
@@ -42,7 +41,10 @@ exports.createWallet = (req, res, next) => {
 
 //Update the value of a wallet in the database belonging to the current user
 exports.updateDollars = (req, res, next) => {
-  Wallet.updateOne({ _id: req.body.id }, {"$inc": {dollars: req.body.dollars }})
+  Wallet.updateOne(
+    { _id: req.body.id },
+    { $inc: { dollars: req.body.dollars } }
+  )
     .then(result => {
       res.status(200).json({
         message: "Update success"
@@ -54,7 +56,8 @@ exports.updateDollars = (req, res, next) => {
 };
 
 exports.getCurDollars = (req, res, next) => {
-    Wallet.findById(req.userData.userId).then(wallet =>{
+  User.findById(req.userData.userId).then(user =>{
+    Wallet.findById(user.curWallet).then(wallet => {
       res.status(200).json({
         message: "Dollars Found!",
         dollars: wallet.dollars
@@ -65,4 +68,5 @@ exports.getCurDollars = (req, res, next) => {
         message: "Couldn't Find Dollars"
       });
     });
+  })
 };

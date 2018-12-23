@@ -13,7 +13,7 @@ import { AuthService } from "../../services/auth.service";
   styleUrls: ["./currencies.component.css"]
 })
 export class CurrenciesComponent implements OnInit, OnDestroy {
-  dollarAmmount: number = 0;
+  dollarAmmount: number;
   currencies: Currency[];
 
   /*
@@ -41,7 +41,7 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
         this.userIsAuthenticated = isAuthenticated;
       });
     if (this.userIsAuthenticated) {
-      this.currencyService.getDollars;
+      this.currencyService.getDollars();
       this.currencyService.getUpdatedDollarListerner().subscribe(dollars => {
         this.dollarAmmount = dollars;
       })

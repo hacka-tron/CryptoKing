@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { CurrencyService } from "../../services/currency.service";
 
 @Component({
   selector: "app-not-found",
@@ -6,7 +7,10 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./not-found.component.css"]
 })
 export class NotFoundComponent implements OnInit {
-  constructor() {}
+  constructor(private currencyService: CurrencyService) {}
 
   ngOnInit() {}
+  makeWallet(){
+    this.currencyService.makeWallet();
+  }
 }

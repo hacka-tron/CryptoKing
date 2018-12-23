@@ -2,15 +2,14 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
-const Coin = require("../models/coin");
+const Wallet = require("../models/wallet");
 
-const Wallet = require("./helpers/wallet")
+
 
 //Adds a user to the database
 exports.createUser = (req, res, next) => {
   //Create a hash of the incoming password using bcrypt
   bcrypt.hash(req.body.password, 10).then(hash => {
-    Wallet.makeWallet(createdUser._id, "default", 1000, function(){
     const user = new User({
       email: req.body.email,
       userName: req.body.userName,
@@ -19,11 +18,18 @@ exports.createUser = (req, res, next) => {
     user
       .save()
       .then(createdUser => {
-
-          res.status(201).json({
-            message: "User Created",
-            user: createdUser
-          });
+        const wallet = new Wallet({
+          owner: createdUser._id,
+          name: "Default",
+          dollars: 1000
+        })
+        wallet.save().then(createdWallet =>{
+          User.updateOne({_id: createdUser._id}, {"curWallet": createdWallet._id}, {upsert: true}).then(finishedUser =>{
+            res.status(201).json({
+              message: "User Created",
+              user: createdUser
+            });
+          })
         })
       })
       .catch(err => {
@@ -54,7 +60,7 @@ exports.userLogin = (req, res, next) => {
       }
       console.log("Loged in!");
       const token = jwt.sign(
-        { email: fetchedUser.email },
+        { email: fetchedUser.email, userId: fetchedUser._id },
         process.env.JWT_KEY,
         { expiresIn: "1h" }
       );

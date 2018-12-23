@@ -8,7 +8,7 @@ import { Currency } from "../components/models/Currencies";
 import { Coin } from "../components/models/Coins";
 
 const BACKEND_COIN_URL = environment.backendApiUrl + "/coins";
-const BACKEND_WALLET_URL = environment.backendApiUrl + "/wallet";
+const BACKEND_WALLET_URL = environment.backendApiUrl + "/wallets";
 const BACKEND_LEADER_BOARD_URL = environment.backendApiUrl + "/leaderboards";
 const CURRENCIES_URL = environment.currencyApiUrl;
 
@@ -38,6 +38,11 @@ export class CurrencyService {
 
   constructor(private http: HttpClient) {}
 
+  makeWallet(){
+    this.http.get(BACKEND_WALLET_URL/*, {name: "default",dollars: 1000 }*/).subscribe(response =>{
+      console.log(response);
+    })
+  }
   getCurrencies() {
     return this.http
       .get<{ data: any; metadata: any }>(CURRENCIES_URL)
