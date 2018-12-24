@@ -1,13 +1,54 @@
-const Wallet = require("../models/wallet");
 const User = require("../models/user");
+const Wallet = require("../models/wallet");
+const Coin = require("../models/coin");
+
+const WalletHelper = require("./helpers/wallet");
 
 //Gets a list of all wallets in database that belong to the current user
 exports.getWallets = (req, res, next) => {
   Wallet.find({ owner: req.userData.userId }).then(wallets => {
-    res.status(200).json({
-      messsage: "Coins fetched succsfully",
-      wallets: wallets
+    let walletIds = wallets.map(wallet => wallet._id);
+    Coin.find({ wallet: walletIds }).then(coins => {
+      const walletArray = WalletHelper.createWalletArray(wallets, coins);
+      res.status(200).json({
+        messsage: "Wallets fetched succsfully",
+        walletArray: walletArray
+      });
     });
+  });
+};
+
+exports.getActiveWallet = (req, res, next) => {
+  User.findById(req.userData.userId).then(user => {
+    Wallet.findById(user.curWallet)
+      .then(wallet => {
+        res.status(200).json({
+          message: "Wallet Found!",
+          wallet: wallet
+        });
+      })
+      .catch(err => {
+        return res.status(401).json({
+          message: "Couldn't Find Wallet"
+        });
+      });
+  });
+};
+
+exports.getCurDollars = (req, res, next) => {
+  User.findById(req.userData.userId).then(user => {
+    Wallet.findById(user.curWallet)
+      .then(wallet => {
+        res.status(200).json({
+          message: "Dollars Found!",
+          dollars: wallet.dollars
+        });
+      })
+      .catch(err => {
+        return res.status(401).json({
+          message: "Couldn't Find Dollars"
+        });
+      });
   });
 };
 
@@ -55,18 +96,4 @@ exports.updateDollars = (req, res, next) => {
     });
 };
 
-exports.getCurDollars = (req, res, next) => {
-  User.findById(req.userData.userId).then(user =>{
-    Wallet.findById(user.curWallet).then(wallet => {
-      res.status(200).json({
-        message: "Dollars Found!",
-        dollars: wallet.dollars
-      });
-    })
-    .catch(err => {
-      return res.status(401).json({
-        message: "Couldn't Find Dollars"
-      });
-    });
-  })
-};
+

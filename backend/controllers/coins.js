@@ -1,5 +1,5 @@
 const Coin = require("../models/coin");
-
+const Wallet = require("../models/wallet")
 const Currencies = require("./helpers/currencies");
 const Dollar = require("./helpers/wallet");
 
@@ -27,31 +27,38 @@ exports.getCoin = (req, res, next) => {
 //Adds a new coin to the wallet, and subtracts the dollar value of that coin from the wallet dollars
 exports.buyCoin = (req, res, next) => {
   Currencies.getCurrencies(function(currencies) {
-    coinsToBuy = req.body.cost/Currencies.getCoinPrice(req.body.id, currencies);
-    Dollar.updateDollars(-req.body.cost, function() {
+    var coinsToBuy = req.body.cost/Currencies.getCoinPrice(req.body.id, currencies);
+    console.log(req.body);
+    Wallet.findOneAndUpdate(
+      { _id: req.body.wallet },
+      { $inc: { dollars: -req.body.cost } }
+    ).then(wallet => {
+      var updatedDollars = wallet.dollars-req.body.cost
       Coin.findOneAndUpdate(
         { id: req.body.id, wallet: req.body.wallet },
-        { $inc: { ammount: coinsToBuy } }
+        { $inc: { ammount: coinsToBuy }}
       ).then(updatedCoin => {
         if (updatedCoin) {
           res.status(201).json({
             message: "Coin bought succesfully",
-            coin: updatedCoin
+            coin: updatedCoin,
+            dollars: updatedDollars
           });
         } else {
           const coin = new Coin({
             id: req.body.id,
-            ammount: req.body.ammount,
+            ammount: coinsToBuy,
             wallet: req.body.wallet
           });
           coin.save().then(createdCoin => {
             res.status(201).json({
               message: "Coin bought succesfully",
-              coin: createdCoin
+              coin: createdCoin,
+              dollars: updatedDollars
             });
           });
         }
       });
-    });
+    })
   });
 };

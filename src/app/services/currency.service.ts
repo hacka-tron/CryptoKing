@@ -6,6 +6,7 @@ import { map } from "rxjs/operators";
 import { environment } from "../../environments/environment";
 import { Currency } from "../components/models/Currencies";
 import { Coin } from "../components/models/Coins";
+import { Wallet } from "../components/models/Wallet";
 
 const BACKEND_COIN_URL = environment.backendApiUrl + "/coins";
 const BACKEND_WALLET_URL = environment.backendApiUrl + "/wallets";
@@ -19,30 +20,47 @@ export class CurrencyService {
   //This is the list of currencies that we get from the api
   private currencies: Currency[] = [];
 
-  //This is the list of currencies that we have purchased
-  private coins: Coin[] = [];
+  private activeWalletId: string;
+
+  private wallets: Wallet[] = [];
 
   //This is the current dollar ammount in the active wallet
   private dollars: number = 0;
 
-  //This is a leaderBoard of highest overall value portfolios
-
   //Registers change in currencies
   private currenciesUpdated = new Subject<Currency[]>();
 
-  //Registers change in coins
-  private coinsUpdated = new Subject<Coin[]>();
+  private walletsUpdated = new Subject<Wallet[]>();
+
+  private activeWalletIdUpdated = new Subject<string>();
 
   //Registers change in dollars
   private dollarsUpdated = new Subject<number>();
 
   constructor(private http: HttpClient) {}
 
-  makeWallet(){
-    this.http.get(BACKEND_WALLET_URL/*, {name: "default",dollars: 1000 }*/).subscribe(response =>{
-      console.log(response);
-    })
+  getWallets() {
+    this.http
+      .get<{ message: string; walletArray: any }>(BACKEND_WALLET_URL)
+      .pipe(
+        map(responseData => {
+          return responseData.walletArray.map(curWallet => {
+            return {
+              id: curWallet[0]._id,
+              owner: curWallet[0].owner,
+              name: curWallet[0].name,
+              dollars: curWallet[0].dollars,
+              coins: curWallet[1]
+            };
+          });
+        })
+      )
+      .subscribe(wallets => {
+        this.wallets = wallets;
+        this.walletsUpdated.next([...this.wallets]);
+      });
   }
+
   getCurrencies() {
     return this.http
       .get<{ data: any; metadata: any }>(CURRENCIES_URL)
@@ -76,29 +94,23 @@ export class CurrencyService {
       });
   }
 
-  getCoins() {
+  getActiveWalletId() {
     this.http
-      .get<{ message: string; coins: Coin[] }>(BACKEND_COIN_URL)
-      .pipe(
-        map(responseData => {
-          return responseData.coins.map(curCoin => {
-            return {
-              id: curCoin.id,
-              ammount: curCoin.ammount,
-              wallet: curCoin.wallet
-            };
-          });
-        })
+      .get<{ message: string; wallet: any }>(
+        BACKEND_WALLET_URL + "/activeWallet"
       )
-      .subscribe(transformedCoins => {
-        this.coins = transformedCoins;
-        this.coinsUpdated.next([...this.coins]);
+      .subscribe(response => {
+        if (response.wallet) {
+          this.activeWalletId = response.wallet._id;
+          this.activeWalletIdUpdated.next(this.activeWalletId);
+        }
       });
   }
-
   getDollars() {
     this.http
-      .get<{ message: string; dollars: number }>(BACKEND_WALLET_URL+"/dollars")
+      .get<{ message: string; dollars: number }>(
+        BACKEND_WALLET_URL + "/dollars"
+      )
       .subscribe(response => {
         if (response.dollars) {
           this.dollars = response.dollars;
@@ -116,10 +128,17 @@ export class CurrencyService {
       id: id,
       cost: cost,
       wallet: wallet
-    }
-    this.http.post<{message: string, coin: Coin}>(BACKEND_COIN_URL, coinToBuy).subscribe(coin =>{
-      console.log(coin)
-    })
+    };
+    this.http
+      .post<{ message: string; coin: Coin; dollars: number }>(
+        BACKEND_COIN_URL,
+        coinToBuy
+      )
+      .subscribe(response => {
+        this.getWallets();
+        this.dollars = response.dollars;
+        this.dollarsUpdated.next(this.dollars);
+      });
   }
 
   sellCoin(id: number, ammount: number) {
@@ -150,23 +169,37 @@ export class CurrencyService {
     */
   }
 
-  findItemPos(id: number, inArr: Array<any>) {
+  findItemById(id: number|string, inArr: Array<any>) {
     for (var i = 0; i < inArr.length; i++) {
       if (inArr[i].id == id) {
-        return i;
+        return inArr[i];
       }
     }
     return null;
+  }
+
+  findTotalValue(walletId: string){
+    this.getCurrencies();
+    this.getWallets();
+    const wallet = this.findItemById(walletId, this.wallets);
+    var total = wallet.dollars;
+    for (let coin of wallet.coins){
+      total += coin.ammount* this.findItemById(coin.id, this.currencies).USD.price;
+    }
+    return total;
   }
 
   getUpdatedCurrenciesListner() {
     return this.currenciesUpdated.asObservable();
   }
 
-  getUpdatedCoinsListner() {
-    return this.coinsUpdated.asObservable();
+  getUpdatedWalletsListner() {
+    return this.walletsUpdated.asObservable();
   }
 
+  getUpdatedActiveWalletIdListner(){
+    return this.activeWalletIdUpdated.asObservable();
+  }
   getUpdatedDollarListerner() {
     return this.dollarsUpdated.asObservable();
   }

@@ -10,7 +10,7 @@ export class NotFoundComponent implements OnInit {
   constructor(private currencyService: CurrencyService) {}
 
   ngOnInit() {}
-  makeWallet(){
-    this.currencyService.makeWallet();
+  getWallets(){
+    this.currencyService.getWallets();
   }
 }

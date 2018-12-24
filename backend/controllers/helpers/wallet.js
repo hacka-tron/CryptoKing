@@ -1,15 +1,13 @@
-const request = require("request");
-
-exports.updateDollars = function(dollars) {
-  var dollarOptions = {
-    uri: "http://localhost3000/api/wallets",
-    body: JSON.stringify({dollars: dollars}),
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json"
+exports.createWalletArray = function(wallets, coins) {
+  var walletsArray = [];
+  for (wallet of wallets) {
+    matchedCoins = [];
+    for (coin of coins) {
+      if (coin.wallet == wallet._id) {
+        matchedCoins.push(coin);
+      }
     }
-  };
-  request(dollarOptions, function(error, response, body) {
-    return callback();
-  });
+    walletsArray.push([wallet, matchedCoins]);
+  }
+  return walletsArray;
 };

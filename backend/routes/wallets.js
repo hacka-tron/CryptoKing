@@ -8,15 +8,15 @@ const router = express.Router();
 
 router.get("", checkAuth, WalletController.getWallets);
 
-router.get("/dollars", checkAuth, WalletController.getCurDollars)
+router.get("/activeWallet", checkAuth, WalletController.getActiveWallet);
+
+router.get("/dollars", checkAuth, WalletController.getCurDollars);
 
 router.get("/:id", checkAuth, WalletController.getWallet);
 
 router.post("", checkAuth, WalletController.createWallet);
 
 router.put("", checkAuth, WalletController.updateDollars);
-
-
 
 //router.delete("/:id", checkAuth, WalletController.removeWallet)
 

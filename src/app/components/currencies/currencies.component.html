@@ -36,7 +36,7 @@
               <div [hidden]="!curAmmount.errors?.min" class="invalid-feedback">You must spend at least $1</div>
               <div [hidden]="!curAmmount.errors?.max" class="invalid-feedback">You can only invest a maximum of
                 ${{dollarAmmount}}</div>
-              <button (click)="buyCoin(currency.id,(currencyProp.beingBought), curWallet)" [disabled]="!coinForm.form.valid"
+              <button (click)="buyCoin(currency.id,currencyProp.beingBought, curWalletId)" [disabled]="!coinForm.form.valid"
                 class="btn btn-block mb-3">Buy Coin</button>
             </div>
           </form>
@@ -83,7 +83,7 @@
               <div [hidden]="!curAmmount.errors?.min" class="invalid-feedback">You must spend at least $1</div>
               <div [hidden]="!curAmmount.errors?.max" class="invalid-feedback">You can only invest a maximum of
                 ${{dollarAmmount}}</div>
-              <button (click)="buyCoin(currency.id,currencyProp.beingBought, curWallet)" [disabled]="!coinForm.form.valid"
+              <button (click)="buyCoin(currency.id,currencyProp.beingBought, curWalletId)" [disabled]="!coinForm.form.valid"
                 class="btn btn-block mb-3">Buy Coin</button>
             </div>
           </form>
