@@ -123,15 +123,15 @@ export class CurrencyService {
     return this.http.get<any>(BACKEND_LEADER_BOARD_URL);
   }
 
-  buyCoin(id: number, cost: number, wallet: string) {
+  buyCoin(id: number, cost: number, walletId: string) {
     const coinToBuy = {
       id: id,
       cost: cost,
-      wallet: wallet
+      wallet: walletId
     };
     this.http
       .post<{ message: string; coin: Coin; dollars: number }>(
-        BACKEND_COIN_URL,
+        BACKEND_COIN_URL +"/buy",
         coinToBuy
       )
       .subscribe(response => {
@@ -141,32 +141,22 @@ export class CurrencyService {
       });
   }
 
-  sellCoin(id: number, ammount: number) {
-    /*
-    const curPos = this.findItemPos(id, this.coins);
-    const coin = {
+  sellCoin(id: number, ammount: number, walletId: string) {
+    const coinToSell = {
       id: id,
-      ammount: this.coins[curPos].ammount - ammount
+      ammount: ammount,
+      wallet: walletId
     };
-    const value =
-      this.currencies[this.findItemPos(id, this.currencies)].USD.price *
-      ammount;
-
-    //Sets new dollar ammount after sale
-    const newDollar = {
-      id: 0,
-      ammount: this.coins[0].ammount + value
-    };
-
     this.http
-      .put<{ message: string; coin: Coin }>(BACKEND_COIN_URL, coin)
-      .subscribe(responseData => {
-        //These values are changed here to insure request was successful
-        this.coins[curPos].ammount = responseData.coin.ammount;
-        this.updateDollar(newDollar);
-        this.coinsUpdated.next([...this.coins]);
+      .post<{ message: string; coin: Coin; dollars: number }>(
+        BACKEND_COIN_URL +"/sell",
+        coinToSell
+      )
+      .subscribe(response => {
+        this.getWallets();
+        this.dollars = response.dollars;
+        this.dollarsUpdated.next(this.dollars);
       });
-    */
   }
 
   findItemById(id: number|string, inArr: Array<any>) {
@@ -179,8 +169,8 @@ export class CurrencyService {
   }
 
   findTotalValue(walletId: string){
-    this.getCurrencies();
-    this.getWallets();
+    //this.getCurrencies();
+    //this.getWallets();
     const wallet = this.findItemById(walletId, this.wallets);
     var total = wallet.dollars;
     for (let coin of wallet.coins){

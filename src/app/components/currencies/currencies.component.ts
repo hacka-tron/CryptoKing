@@ -5,7 +5,6 @@ import { Currency } from "../models/Currencies";
 import { CurrencyProp } from "../models/CurrencyProps";
 import { Subscription } from "rxjs";
 import { AuthService } from "../../services/auth.service";
-import { Wallet } from "../models/Wallet";
 
 @Component({
   selector: "app-currencies",
@@ -102,8 +101,8 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
     }
   }
 
-  private findItemById(id: number|string, inArr: any[]){
-    return this.currencyService.findItemById(id, inArr);
+  private findPropById(id: number){
+    return this.currencyService.findItemById(id, this.currencyProps);
   }
 
   ngOnDestroy() {

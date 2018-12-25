@@ -1,56 +1,122 @@
-<!--div class="container card" *ngIf="currencies != undefined">
-  <div class="card-body">
-    <h3 class="card-title">My Coins</h3>
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">Coin</th>
-          <th scope="col">Ammount</th>
-          <th scope="col">Value($)</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody *ngFor="let coin of myCoins">
-        <ng-template let-coinProp="propVariable" [ngTemplateOutletContext]="{ propVariable: findItemById(coin.id, coinProps) }"
-          [ngTemplateOutlet]="setCoinProp" #setCoinProp>
-          <tr *ngIf="(coin.ammount * findItemById(coin.id, currencies).USD.price) > 1">
-            <th scope="row">{{findItemById(coin.id, currencies).name}}</th>
-            <td>{{coin.ammount}} </td>
-            <td>{{coin.ammount * findItemById(coin.id, currencies).USD.price}}</td>
-            <td>
-              <button (click)="toggleCoinHide(coinProp)" *ngIf="coin.id != 0" class="btn btn-danger">
-                <i class="fa fa-dollar"></i>
-              </button>
-              <form #sellForm="ngForm" *ngIf="!coinProp.hide">
-                <div class="form-group">
-                  <label>How much currency do you want to sell?($)</label>
-                  <input [(ngModel)]="coinProp.beingSold" [ngClass]="{'is-invalid': curSell.errors && curSell.touched}"
-                    type="number" class="form-control" name="curSell" #curSell="ngModel" required min="1" [max]="coin.ammount * findItemById(coin.id, currencies).USD.price"
-                    ng-pattern="integerval">
-                  <p [hidden]="!(coinProp.beingSold > 0)">{{findItemById(coin.id, currencies).symbol}}:
-                    {{coinProp.beingSold/findItemById(coin.id,
-                    currencies).USD.price}}
-                  </p>
-                  <div [hidden]="!curSell.errors?.required" class="invalid-feedback">Must add an input</div>
-                  <div [hidden]="!curSell.errors?.min" class="invalid-feedback">You must sell atleast $1 worth of
-                    currency</div>
-                  <div [hidden]="!curSell.errors?.max" class="invalid-feedback">You can only sell a maximum of
-                    {{coin.ammount}}
-                    {{findItemById(coin.id, currencies).name}}</div>
-                  <button (click)="sellCoin(coin.id, coinProp.beingSold/findItemById(coin.id, currencies).USD.price, coinProp.beingSold)"
-                    [disabled]="!sellForm.form.valid" class="btn btn-block mb-3">Sell Coin</button>
-                </div>
-              </form>
-            </td>
+<div *ngIf="currencies != undefined">
+  <tabset type="pills" *ngFor="let wallet of wallets">
+    <div class="container card">
+      <tab [heading]="wallet.name">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Coin</th>
+              <th scope="col">Ammount</th>
+              <th scope="col">Value($)</th>
+              <th scope = "col">Sell</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td scope="row">Dollars</td>
+              <td>{{ wallet.dollars }}</td>
+              <td>{{ wallet.dollars }}</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td scope="row">{{ getCoinName(wallet.coins[0].id) }}</td>
+              <td>{{ wallet.coins[0].ammount }}</td>
+              <td>
+                {{ getCoinValue(wallet.coins[0].id, wallet.coins[0].ammount) }}
+              </td>
+              <td></td>
+            </tr>
+          </tbody>
+          <tbody *ngFor="let coin of wallet.coins">
+            <tr
+              *ngIf="
+                getCoinValue(coin.id, coin.ammount) > MINIMUM_DISPLAY_VALUE
+              "
+            >
+              <td scope="row">{{ getCoinName(coin.id) }}</td>
+              <td>{{ coin.ammount }}</td>
+              <td>{{ getCoinValue(coin.id, coin.ammount) }}</td>
+              <td>
+                <!--button
+                  (click)="toggleCoinHide(coinProp)"
+                  *ngIf="coin.id != 0"
+                  class="btn btn-danger"
+                >
+                  <i class="fa fa-dollar"></i>
+                </button>
+                <form #sellForm="ngForm" *ngIf="!coinProp.hide">
+                  <div class="form-group">
+                    <label>How much currency do you want to sell?($)</label>
+                    <input
+                      [(ngModel)]="coinProp.beingSold"
+                      [ngClass]="{
+                        'is-invalid': curSell.errors && curSell.touched
+                      }"
+                      type="number"
+                      class="form-control"
+                      name="curSell"
+                      #curSell="ngModel"
+                      required
+                      min="1"
+                      [max]="
+                        coin.ammount *
+                        findItemById(coin.id, currencies).USD.price
+                      "
+                      ng-pattern="integerval"
+                    />
+                    <p [hidden]="!(coinProp.beingSold > 0)">
+                      {{ findItemById(coin.id, currencies).symbol }}:
+                      {{
+                        coinProp.beingSold /
+                          findItemById(coin.id, currencies).USD.price
+                      }}
+                    </p>
+                    <div
+                      [hidden]="!curSell.errors?.required"
+                      class="invalid-feedback"
+                    >
+                      Must add an input
+                    </div>
+                    <div
+                      [hidden]="!curSell.errors?.min"
+                      class="invalid-feedback"
+                    >
+                      You must sell atleast $1 worth of currency
+                    </div>
+                    <div
+                      [hidden]="!curSell.errors?.max"
+                      class="invalid-feedback"
+                    >
+                      You can only sell a maximum of {{ coin.ammount }}
+                      {{ findItemById(coin.id, currencies).name }}
+                    </div>
+                    <button
+                      (click)="
+                        sellCoin(
+                          coin.id,
+                          coinProp.beingSold /
+                            findItemById(coin.id, currencies).USD.price,
+                          coinProp.beingSold
+                        )
+                      "
+                      [disabled]="!sellForm.form.valid"
+                      class="btn btn-block mb-3"
+                    >
+                      Sell Coin
+                    </button>
+                  </div>
+                </form-->
+              </td>
+            </tr>
+          </tbody>
+          <tr>
+            <th scope="row">Total Value</th>
+            <td>~</td>
+            <td>{{ findTotalValue(wallet.id) }}</td>
+            <td></td>
           </tr>
-        </ng-template>
-      </tbody>
-      <tr>
-        <th scope="row">Total Value</th>
-        <td>~</td>
-        <td>{{findTotalValue()}}</td>
-        <td></td>
-      </tr>
-    </table>
-  </div>
-</div-->
+        </table>
+      </tab>
+    </div>
+  </tabset>
+</div>

@@ -2,7 +2,7 @@
   <h2 class="ml-3 text-warning">Favorites</h2>
   <ul class="list-unstyled m-3">
     <div *ngFor="let currency of currencies">
-      <ng-template let-currencyProp="propVariable" [ngTemplateOutletContext]="{ propVariable: findItemById(currency.id, currencyProps) }"
+      <ng-template let-currencyProp="propVariable" [ngTemplateOutletContext]="{ propVariable: findPropById(currency.id) }"
         [ngTemplateOutlet]="setCurrencyProp" #setCurrencyProp>
         <li class="card card-body mb-2 bg-light" *ngIf="currencyProp.isFavorite">
           <h3>#{{currency.rank}} {{currency.name}}
@@ -29,8 +29,7 @@
               <input [(ngModel)]="currencyProp.beingBought" [ngClass]="{'is-invalid': curAmmount.errors && curAmmount.touched}"
                 type="number" class="form-control" name="curAmmount" #curAmmount="ngModel" required min="1" [max]="dollarAmmount"
                 ng-pattern="integerval">
-              <p [hidden]="!(currencyProp.beingBought > 0)">{{currency.symbol}}: {{findItemById(currency.id,
-                currencyProps).beingBought/currency.USD.price}}
+              <p [hidden]="!(currencyProp.beingBought > 0)">{{currency.symbol}}: {{findPropById(currency.id).beingBought/currency.USD.price}}
               </p>
               <div [hidden]="!curAmmount.errors?.required" class="invalid-feedback">Must add an input</div>
               <div [hidden]="!curAmmount.errors?.min" class="invalid-feedback">You must spend at least $1</div>
@@ -49,9 +48,9 @@
   <h2 class="ml-3">Currencies</h2>
   <ul class="list-unstyled m-3">
     <div *ngFor="let currency of currencies">
-      <ng-template let-currencyProp="propVariable" [ngTemplateOutletContext]="{ propVariable: findItemById(currency.id, currencyProps) }"
+      <ng-template let-currencyProp="propVariable" [ngTemplateOutletContext]="{ propVariable: findPropById(currency.id) }"
         [ngTemplateOutlet]="setCurrencyProp" #setCurrencyProp>
-        <li class="card card-body mb-2 bg-light" *ngIf="!currencyProp.isFavorite && currency.id>0">
+        <li class="card card-body mb-2 bg-light" *ngIf="!currencyProp.isFavorite">
           <h3>#{{currency.rank}} {{currency.name}}
             <small class="float-right">
               <button (click)="toggleToBuy(currencyProp)" class="btn-dark btn-sm btn" *ngIf="userIsAuthenticated">
@@ -76,8 +75,7 @@
               <input [(ngModel)]="currencyProp.beingBought" [ngClass]="{'is-invalid': curAmmount.errors && curAmmount.touched}"
                 type="number" class="form-control" name="curAmmount" #curAmmount="ngModel" required min="1" [max]="dollarAmmount"
                 ng-pattern="integerval">
-              <p [hidden]="!(currencyProp.beingBought > 0)">{{currency.symbol}}: {{findItemById(currency.id,
-                currencyProps).beingBought/currency.USD.price}}
+              <p [hidden]="!(currencyProp.beingBought > 0)">{{currency.symbol}}: {{findPropById(currency.id).beingBought/currency.USD.price}}
               </p>
               <div [hidden]="!curAmmount.errors?.required" class="invalid-feedback">Must add an input</div>
               <div [hidden]="!curAmmount.errors?.min" class="invalid-feedback">You must spend at least $1</div>

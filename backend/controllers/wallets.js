@@ -81,6 +81,7 @@ exports.createWallet = (req, res, next) => {
 };
 
 //Update the value of a wallet in the database belonging to the current user
+/*
 exports.updateDollars = (req, res, next) => {
   Wallet.updateOne(
     { _id: req.body.id },
@@ -95,5 +96,5 @@ exports.updateDollars = (req, res, next) => {
       console.log(error);
     });
 };
-
+*/
 
