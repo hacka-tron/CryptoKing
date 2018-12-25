@@ -1,7 +1,6 @@
 const Coin = require("../models/coin");
-const Wallet = require("../models/wallet")
+const Wallet = require("../models/wallet");
 const Currencies = require("./helpers/currencies");
-const Dollar = require("./helpers/wallet");
 
 //Gets a list of all coins in a specified wallet
 exports.getCoins = (req, res, next) => {
@@ -27,16 +26,16 @@ exports.getCoin = (req, res, next) => {
 //Adds a new coin to the wallet, and subtracts the dollar value of that coin from the wallet dollars
 exports.buyCoin = (req, res, next) => {
   Currencies.getCurrencies(function(currencies) {
-    var coinsToBuy = req.body.cost/Currencies.getCoinPrice(req.body.id, currencies);
-    console.log(req.body);
+    var coinsToBuy =
+      req.body.cost / Currencies.getCoinPrice(req.body.id, currencies);
     Wallet.findOneAndUpdate(
       { _id: req.body.wallet },
       { $inc: { dollars: -req.body.cost } }
     ).then(wallet => {
-      var updatedDollars = wallet.dollars-req.body.cost
+      var updatedDollars = wallet.dollars - req.body.cost;
       Coin.findOneAndUpdate(
         { id: req.body.id, wallet: req.body.wallet },
-        { $inc: { ammount: coinsToBuy }}
+        { $inc: { ammount: coinsToBuy } }
       ).then(updatedCoin => {
         if (updatedCoin) {
           res.status(201).json({
@@ -59,6 +58,30 @@ exports.buyCoin = (req, res, next) => {
           });
         }
       });
-    })
+    });
+  });
+};
+
+//Adds a new coin to the wallet, and subtracts the dollar value of that coin from the wallet dollars
+exports.sellCoin = (req, res, next) => {
+  Currencies.getCurrencies(function(currencies) {
+    var cost =
+      req.body.ammount * Currencies.getCoinPrice(req.body.id, currencies);
+    Wallet.findOneAndUpdate(
+      { _id: req.body.wallet },
+      { $inc: { dollars: cost } }
+    ).then(wallet => {
+      var updatedDollars = wallet.dollars + cost;
+      Coin.findOneAndUpdate(
+        { id: req.body.id, wallet: req.body.wallet },
+        { $inc: { ammount: -req.body.ammount } }
+      ).then(updatedCoin => {
+        res.status(201).json({
+          message: "Coin Sold succesfully",
+          coin: updatedCoin,
+          dollars: updatedDollars
+        });
+      });
+    });
   });
 };

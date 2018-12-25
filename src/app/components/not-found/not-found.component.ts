@@ -7,10 +7,7 @@ import { CurrencyService } from "../../services/currency.service";
   styleUrls: ["./not-found.component.css"]
 })
 export class NotFoundComponent implements OnInit {
-  constructor(private currencyService: CurrencyService) {}
+  constructor() {}
 
   ngOnInit() {}
-  getWallets(){
-    this.currencyService.getWallets();
-  }
 }

@@ -16,7 +16,7 @@ router.get("/:id", checkAuth, WalletController.getWallet);
 
 router.post("", checkAuth, WalletController.createWallet);
 
-router.put("", checkAuth, WalletController.updateDollars);
+//router.put("", checkAuth, WalletController.updateDollars);
 
 //router.delete("/:id", checkAuth, WalletController.removeWallet)
 
