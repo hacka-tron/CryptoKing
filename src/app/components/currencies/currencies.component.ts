@@ -25,7 +25,11 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
   userIsAuthenticated = false;
   userName: string;
   curWalletId: string;
+
   private authListnerSubs: Subscription;
+  private dollarListnerSubs: Subscription;
+  private walletIdListnerSubs: Subscription;
+  private currencyListenterSubs: Subscription;
 
   constructor(
     private currencyService: CurrencyService,
@@ -42,31 +46,35 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
       });
     if (this.userIsAuthenticated) {
       this.currencyService.getDollars();
-      this.currencyService.getUpdatedDollarListerner().subscribe(dollars => {
-        this.dollarAmmount = dollars;
-      });
+      this.dollarListnerSubs = this.currencyService
+        .getUpdatedDollarListerner()
+        .subscribe(dollars => {
+          this.dollarAmmount = dollars;
+        });
       this.currencyService.getActiveWalletId();
-      this.currencyService
+      this.walletIdListnerSubs = this.currencyService
         .getUpdatedActiveWalletIdListner()
         .subscribe(activeWalletId => {
           this.curWalletId = activeWalletId;
         });
     }
     this.currencyService.getCurrencies();
-    this.currencyService.getUpdatedCurrenciesListner().subscribe(currencies => {
-      this.currencies = currencies;
+    this.currencyListenterSubs = this.currencyService
+      .getUpdatedCurrenciesListner()
+      .subscribe(currencies => {
+        this.currencies = currencies;
 
-      //Adds the properties for the dollar currency
-      this.currencies.forEach((cur, index) => {
-        this.currencyProps.push({
-          id: cur.id,
-          hide: true,
-          isFavorite: false,
-          toBuy: false,
-          beingBought: 0
+        //Adds the properties for the dollar currency
+        this.currencies.forEach((cur, index) => {
+          this.currencyProps.push({
+            id: cur.id,
+            hide: true,
+            isFavorite: false,
+            toBuy: false,
+            beingBought: 0
+          });
         });
       });
-    });
   }
 
   buyCoin(id: number, ammount: number, wallet: string) {
@@ -101,11 +109,18 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
     }
   }
 
-  private findPropById(id: number){
+  private findPropById(id: number) {
     return this.currencyService.findItemById(id, this.currencyProps);
   }
 
   ngOnDestroy() {
     this.authListnerSubs.unsubscribe();
+    this.currencyListenterSubs.unsubscribe();
+    if (this.dollarListnerSubs) {
+      this.dollarListnerSubs.unsubscribe();
+    }
+    if (this.walletIdListnerSubs) {
+      this.walletIdListnerSubs.unsubscribe();
+    }
   }
 }
