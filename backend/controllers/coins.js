@@ -27,14 +27,14 @@ exports.getCoin = (req, res, next) => {
 exports.buyCoin = (req, res, next) => {
   Currencies.getCurrencies(function(currencies) {
     var coinsToBuy =
-      req.body.cost / Currencies.getCoinPrice(req.body.id, currencies);
+      req.body.cost / Currencies.getCoinPrice(req.body.coinId, currencies);
     Wallet.findOneAndUpdate(
       { _id: req.body.wallet },
       { $inc: { dollars: -req.body.cost } }
     ).then(wallet => {
       var updatedDollars = wallet.dollars - req.body.cost;
       Coin.findOneAndUpdate(
-        { id: req.body.id, wallet: req.body.wallet },
+        { id: req.body.coinId, wallet: req.body.wallet },
         { $inc: { ammount: coinsToBuy } }
       ).then(updatedCoin => {
         if (updatedCoin) {
@@ -45,7 +45,7 @@ exports.buyCoin = (req, res, next) => {
           });
         } else {
           const coin = new Coin({
-            id: req.body.id,
+            id: req.body.coinId,
             ammount: coinsToBuy,
             wallet: req.body.wallet
           });
@@ -66,14 +66,14 @@ exports.buyCoin = (req, res, next) => {
 exports.sellCoin = (req, res, next) => {
   Currencies.getCurrencies(function(currencies) {
     var cost =
-      req.body.ammount * Currencies.getCoinPrice(req.body.id, currencies);
+      req.body.ammount * Currencies.getCoinPrice(req.body.coinId, currencies);
     Wallet.findOneAndUpdate(
-      { _id: req.body.wallet },
+      { _id: req.body.walletId },
       { $inc: { dollars: cost } }
     ).then(wallet => {
       var updatedDollars = wallet.dollars + cost;
       Coin.findOneAndUpdate(
-        { id: req.body.id, wallet: req.body.wallet },
+        { id: req.body.coinId, wallet: req.body.walletId },
         { $inc: { ammount: -req.body.ammount } }
       ).then(updatedCoin => {
         res.status(201).json({

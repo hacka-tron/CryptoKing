@@ -22,8 +22,9 @@ import { ErrorComponent } from "./components/error/error.component";
 
 import { ErrorInterceptor } from "./error-interceptor";
 import { AuthInterceptor } from "./auth/auth-interceptor";
-import { AboutComponent } from './components/about/about.component';
-import { TabsModule } from 'ngx-bootstrap/tabs';
+import { AboutComponent } from "./components/about/about.component";
+import { TabsModule } from "ngx-bootstrap/tabs";
+import { ModalModule } from "ngx-bootstrap/modal";
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
     CustomFormsModule,
     ChartModule,
     MatDialogModule,
-    TabsModule.forRoot()
+    TabsModule.forRoot(),
+    ModalModule.forRoot()
   ],
   providers: [
     CurrencyService,

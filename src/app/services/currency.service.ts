@@ -123,15 +123,15 @@ export class CurrencyService {
     return this.http.get<any>(BACKEND_LEADER_BOARD_URL);
   }
 
-  buyCoin(id: number, cost: number, walletId: string) {
+  buyCoin(cost: number, coinId: number, walletId: string) {
     const coinToBuy = {
-      id: id,
+      coinId: coinId,
       cost: cost,
       wallet: walletId
     };
     this.http
       .post<{ message: string; coin: Coin; dollars: number }>(
-        BACKEND_COIN_URL +"/buy",
+        BACKEND_COIN_URL + "/buy",
         coinToBuy
       )
       .subscribe(response => {
@@ -141,15 +141,15 @@ export class CurrencyService {
       });
   }
 
-  sellCoin(id: number, ammount: number, walletId: string) {
+  sellCoin(ammount: number, coinId: number, walletId: string) {
     const coinToSell = {
-      id: id,
+      coinId: coinId,
       ammount: ammount,
-      wallet: walletId
+      walletId: walletId
     };
     this.http
-      .post<{ message: string; coin: Coin; dollars: number }>(
-        BACKEND_COIN_URL +"/sell",
+      .put<{ message: string; coin: Coin; dollars: number }>(
+        BACKEND_COIN_URL + "/sell",
         coinToSell
       )
       .subscribe(response => {
@@ -159,7 +159,7 @@ export class CurrencyService {
       });
   }
 
-  findItemById(id: number|string, inArr: Array<any>) {
+  findItemById(id: number | string, inArr: Array<any>) {
     for (var i = 0; i < inArr.length; i++) {
       if (inArr[i].id == id) {
         return inArr[i];
@@ -168,13 +168,14 @@ export class CurrencyService {
     return null;
   }
 
-  findTotalValue(walletId: string){
+  findTotalValue(walletId: string) {
     //this.getCurrencies();
     //this.getWallets();
     const wallet = this.findItemById(walletId, this.wallets);
     var total = wallet.dollars;
-    for (let coin of wallet.coins){
-      total += coin.ammount* this.findItemById(coin.id, this.currencies).USD.price;
+    for (let coin of wallet.coins) {
+      total +=
+        coin.ammount * this.findItemById(coin.id, this.currencies).USD.price;
     }
     return total;
   }
@@ -187,7 +188,7 @@ export class CurrencyService {
     return this.walletsUpdated.asObservable();
   }
 
-  getUpdatedActiveWalletIdListner(){
+  getUpdatedActiveWalletIdListner() {
     return this.activeWalletIdUpdated.asObservable();
   }
   getUpdatedDollarListerner() {

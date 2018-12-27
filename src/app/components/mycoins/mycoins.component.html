@@ -8,7 +8,7 @@
               <th scope="col">Coin</th>
               <th scope="col">Ammount</th>
               <th scope="col">Value($)</th>
-              <th scope = "col">Sell</th>
+              <th scope="col">Sell</th>
             </tr>
           </thead>
           <tbody>
@@ -16,14 +16,6 @@
               <td scope="row">Dollars</td>
               <td>{{ wallet.dollars }}</td>
               <td>{{ wallet.dollars }}</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td scope="row">{{ getCoinName(wallet.coins[0].id) }}</td>
-              <td>{{ wallet.coins[0].ammount }}</td>
-              <td>
-                {{ getCoinValue(wallet.coins[0].id, wallet.coins[0].ammount) }}
-              </td>
               <td></td>
             </tr>
           </tbody>
@@ -37,75 +29,71 @@
               <td>{{ coin.ammount }}</td>
               <td>{{ getCoinValue(coin.id, coin.ammount) }}</td>
               <td>
-                <!--button
-                  (click)="toggleCoinHide(coinProp)"
-                  *ngIf="coin.id != 0"
-                  class="btn btn-danger"
+                <button
+                  class="btn-danger btn-sm btn"
+                  (click)="openSellingCoin(sellCoin)"
                 >
-                  <i class="fa fa-dollar"></i>
+                  <i class="fa fa-dollar toSell"></i>
                 </button>
-                <form #sellForm="ngForm" *ngIf="!coinProp.hide">
-                  <div class="form-group">
-                    <label>How much currency do you want to sell?($)</label>
-                    <input
-                      [(ngModel)]="coinProp.beingSold"
-                      [ngClass]="{
-                        'is-invalid': curSell.errors && curSell.touched
-                      }"
-                      type="number"
-                      class="form-control"
-                      name="curSell"
-                      #curSell="ngModel"
-                      required
-                      min="1"
-                      [max]="
-                        coin.ammount *
-                        findItemById(coin.id, currencies).USD.price
-                      "
-                      ng-pattern="integerval"
-                    />
-                    <p [hidden]="!(coinProp.beingSold > 0)">
-                      {{ findItemById(coin.id, currencies).symbol }}:
-                      {{
-                        coinProp.beingSold /
-                          findItemById(coin.id, currencies).USD.price
-                      }}
-                    </p>
-                    <div
-                      [hidden]="!curSell.errors?.required"
-                      class="invalid-feedback"
-                    >
-                      Must add an input
-                    </div>
-                    <div
-                      [hidden]="!curSell.errors?.min"
-                      class="invalid-feedback"
-                    >
-                      You must sell atleast $1 worth of currency
-                    </div>
-                    <div
-                      [hidden]="!curSell.errors?.max"
-                      class="invalid-feedback"
-                    >
-                      You can only sell a maximum of {{ coin.ammount }}
-                      {{ findItemById(coin.id, currencies).name }}
-                    </div>
+                <ng-template #sellCoin>
+                  <div class="modal-header">
+                    <h4 class="modal-title pull-left">
+                      Sell {{ getCoinName(coin.id) }}
+                    </h4>
                     <button
-                      (click)="
-                        sellCoin(
-                          coin.id,
-                          coinProp.beingSold /
-                            findItemById(coin.id, currencies).USD.price,
-                          coinProp.beingSold
-                        )
-                      "
-                      [disabled]="!sellForm.form.valid"
-                      class="btn btn-block mb-3"
+                      type="button"
+                      class="close pull-right"
+                      aria-label="Close"
+                      (click)="sellingCoin.hide()"
                     >
-                      Sell Coin
+                      <span aria-hidden="true">&times;</span>
                     </button>
                   </div>
-                </form-->
+                  <div class="modal-body">
+                    <form
+                      (submit)="onSellCoin(sellCoinForm, coin.id, wallet.id)"
+                      #sellCoinForm="ngForm"
+                    >
+                      <input
+                        name="ammount"
+                        [ngClass]="{
+                          'is-invalid':
+                            ammountInput.errors && ammountInput.touched
+                        }"
+                        class="form-control"
+                        ngModel
+                        placeholder="{{ getCoinSymbol(coin.id) }} to sell"
+                        type="number"
+                        #ammountInput="ngModel"
+                        required
+                        [max]="coin.ammount"
+                        ng-pattern="integerval"
+                      />
+                      <p [hidden]="!(sellCoinForm.value.ammount > 0)">
+                        Value: ${{
+                          getCoinValue(coin.id, sellCoinForm.value.ammount)
+                            | number: "1.2-2"
+                        }}
+                      </p>
+                      <div
+                        [hidden]="!ammountInput.errors?.required"
+                        class="invalid-feedback"
+                      >
+                        Must add an input
+                      </div>
+                      <div
+                        [hidden]="!ammountInput.errors?.max"
+                        class="invalid-feedback"
+                      >
+                        You can only sell a maximum of {{ coin.ammount }}
+                        {{ getCoinSymbol(coin.id) }}
+                      </div>
+                      <button class="btn btn-block mt-3" type="submit">
+                        Sell Coin
+                      </button>
+                    </form>
+                  </div>
+                </ng-template>
               </td>
             </tr>
           </tbody>
