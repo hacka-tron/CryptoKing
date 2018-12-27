@@ -29,12 +29,12 @@ exports.buyCoin = (req, res, next) => {
     var coinsToBuy =
       req.body.cost / Currencies.getCoinPrice(req.body.coinId, currencies);
     Wallet.findOneAndUpdate(
-      { _id: req.body.wallet },
+      { _id: req.body.walletId },
       { $inc: { dollars: -req.body.cost } }
     ).then(wallet => {
       var updatedDollars = wallet.dollars - req.body.cost;
       Coin.findOneAndUpdate(
-        { id: req.body.coinId, wallet: req.body.wallet },
+        { id: req.body.coinId, wallet: req.body.walletId },
         { $inc: { ammount: coinsToBuy } }
       ).then(updatedCoin => {
         if (updatedCoin) {
@@ -47,7 +47,7 @@ exports.buyCoin = (req, res, next) => {
           const coin = new Coin({
             id: req.body.coinId,
             ammount: coinsToBuy,
-            wallet: req.body.wallet
+            wallet: req.body.walletId
           });
           coin.save().then(createdCoin => {
             res.status(201).json({

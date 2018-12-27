@@ -15,7 +15,6 @@ import { AuthService } from "../../services/auth.service";
 export class CurrenciesComponent implements OnInit, OnDestroy {
   dollarAmmount: number;
   currencies: Currency[];
-
   /*
    *This is used to set the properties for each currency, and this isn't saved in the databse as it is going to be *reset anyway up reloads
    */
@@ -25,6 +24,7 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
   userIsAuthenticated = false;
   userName: string;
   curWalletId: string;
+  isLoading: boolean = false;
 
   private authListnerSubs: Subscription;
   private dollarListnerSubs: Subscription;
@@ -42,6 +42,7 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
     this.authListnerSubs = this.authService
       .getAuthStatusListner()
       .subscribe(isAuthenticated => {
+        this.isLoading = false;
         this.userIsAuthenticated = isAuthenticated;
       });
     if (this.userIsAuthenticated) {
@@ -49,12 +50,14 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
       this.dollarListnerSubs = this.currencyService
         .getUpdatedDollarListerner()
         .subscribe(dollars => {
+          this.isLoading = false;
           this.dollarAmmount = dollars;
         });
       this.currencyService.getActiveWalletId();
       this.walletIdListnerSubs = this.currencyService
         .getUpdatedActiveWalletIdListner()
         .subscribe(activeWalletId => {
+          this.isLoading = false;
           this.curWalletId = activeWalletId;
         });
     }
@@ -62,6 +65,7 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
     this.currencyListenterSubs = this.currencyService
       .getUpdatedCurrenciesListner()
       .subscribe(currencies => {
+        this.isLoading = false;
         this.currencies = currencies;
 
         //Adds the properties for the dollar currency
@@ -77,10 +81,11 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
       });
   }
 
-  buyCoin(id: number, ammount: number, wallet: string) {
+  buyCoin(ammount: number, coinId: number, walletId: string) {
     if (confirm("Are You Sure?")) {
-      this.currencyService.buyCoin(id, ammount, wallet);
-      const curProp = this.currencyService.findItemById(id, this.currencyProps);
+      this.isLoading = true;
+      this.currencyService.buyCoin(ammount, coinId, walletId);
+      const curProp = this.currencyService.findItemById(coinId, this.currencyProps);
       curProp.beingBought = 0;
       this.toggleToBuy(curProp);
     }

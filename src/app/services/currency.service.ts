@@ -127,7 +127,7 @@ export class CurrencyService {
     const coinToBuy = {
       coinId: coinId,
       cost: cost,
-      wallet: walletId
+      walletId: walletId
     };
     this.http
       .post<{ message: string; coin: Coin; dollars: number }>(

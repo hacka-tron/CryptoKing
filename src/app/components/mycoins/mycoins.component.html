@@ -1,4 +1,5 @@
-<div *ngIf="currencies != undefined">
+<div class="spinner-border" role="status" *ngIf="isLoading"></div>
+<div *ngIf="currencies != undefined && !isLoading">
   <tabset type="pills" *ngFor="let wallet of wallets">
     <div class="container card">
       <tab [heading]="wallet.name">
@@ -88,7 +89,7 @@
                         You can only sell a maximum of {{ coin.ammount }}
                         {{ getCoinSymbol(coin.id) }}
                       </div>
-                      <button class="btn btn-block mt-3" type="submit">
+                      <button class="btn btn-block btn-danger mt-3" type="submit">
                         Sell Coin
                       </button>
                     </form>

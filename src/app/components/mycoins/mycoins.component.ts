@@ -21,6 +21,7 @@ export class MycoinsComponent implements OnInit, OnDestroy {
   activeWallet: string;
   wallets: Wallet[] = [];
   currencies: Currency[];
+  isLoading: boolean = false;
 
   private walletListenerSubs: Subscription;
   private currencyListenerSubs: Subscription;
@@ -36,11 +37,13 @@ export class MycoinsComponent implements OnInit, OnDestroy {
     this.walletListenerSubs = this.currencyService
       .getUpdatedWalletsListner()
       .subscribe(wallets => {
+        this.isLoading = false;
         this.wallets = wallets;
       });
     this.currencyListenerSubs = this.currencyService
       .getUpdatedCurrenciesListner()
       .subscribe(currencies => {
+        this.isLoading = false;
         this.currencies = currencies;
       });
   }
@@ -62,6 +65,7 @@ export class MycoinsComponent implements OnInit, OnDestroy {
   }
   onSellCoin(form: NgForm, coinId, walletId) {
     if (confirm("Are You Sure?")) {
+      this.isLoading = true;
       this.currencyService.sellCoin(form.value.ammount, coinId, walletId);
       this.sellingCoin.hide();
     }

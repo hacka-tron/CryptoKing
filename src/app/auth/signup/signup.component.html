@@ -1,5 +1,6 @@
 <div class="container card">
-  <form (submit)="onSignup(signupForm)" #signupForm="ngForm">
+    <div class="spinner-border" role="status" *ngIf="isLoading"></div>
+  <form (submit)="onSignup(signupForm)" #signupForm="ngForm" *ngIf="!isLoading">
     <div class="form-group card-body">
       <h3 class="card-title">Account Creation</h3>
       <input name="userName" class="form-control" ngModel type="username" placeholder="User Name" #usernameInput="ngModel"
@@ -10,7 +11,7 @@
         required>
       <input name="confirmPassword" class="form-control" ngModel type="password" placeholder="Confirm Password"
         #confirmPasswordInput="ngModel" required>
-      <button class="btn btn-block mt-3" type="submit">Sign Up!</button>
+      <button class="btn btn-block btn-dark mt-3" type="submit">Sign Up!</button>
       <p>already have an account? <a routerLink="/login">Login!</a></p>
     </div>
   </form>
