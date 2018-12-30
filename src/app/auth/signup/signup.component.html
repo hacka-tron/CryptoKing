@@ -11,7 +11,7 @@
         required>
       <input name="confirmPassword" class="form-control" ngModel type="password" placeholder="Confirm Password"
         #confirmPasswordInput="ngModel" required>
-      <button class="btn btn-block btn-dark mt-3" type="submit">Sign Up!</button>
+      <button class="btn btn-block btn-dark mt-3" [disabled]="!signupForm.form.valid" type="submit">Sign Up!</button>
       <p>already have an account? <a routerLink="/login">Login!</a></p>
     </div>
   </form>

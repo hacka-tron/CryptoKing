@@ -80,13 +80,29 @@ exports.createWallet = (req, res, next) => {
   });
 };
 
-//Update the value of a wallet in the database belonging to the current user
-/*
-exports.updateDollars = (req, res, next) => {
-  Wallet.updateOne(
-    { _id: req.body.id },
-    { $inc: { dollars: req.body.dollars } }
-  )
+exports.removeWallet = (req, res, next) => {
+  Wallet.find({owner: req.userData.userId}).then(wallets => {
+    if (wallets.length > 1) {
+      Coin.deleteMany({ wallet: req.params.id }).then(deleted => {
+        Wallet.findOneAndDelete({ _id: req.params.id }).then(response => {
+          Wallet.findOne().then(wallet =>{
+            User.updateOne(
+              { _id: req.userData.userId },
+              { $set: { curWallet: wallet._id } }
+            ).then(updatedUser => {
+              res.status(200).json({
+                message: "Wallet deleted sucessfully!"
+              });
+            });
+          })
+        });
+      });
+    }
+  });
+};
+///Update the name of a wallet in the database belonging to the current user
+exports.updateName = (req, res, next) => {
+  Wallet.updateOne({ _id: req.params.id }, { $set: { name: req.body.name } })
     .then(result => {
       res.status(200).json({
         message: "Update success"
@@ -96,5 +112,3 @@ exports.updateDollars = (req, res, next) => {
       console.log(error);
     });
 };
-*/
-

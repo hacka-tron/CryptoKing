@@ -1,111 +1,200 @@
 <div class="spinner-border" role="status" *ngIf="isLoading"></div>
-<div *ngIf="currencies != undefined && !isLoading">
-  <tabset type="pills" *ngFor="let wallet of wallets">
-    <div class="container card">
-      <tab [heading]="wallet.name">
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Coin</th>
-              <th scope="col">Ammount</th>
-              <th scope="col">Value($)</th>
-              <th scope="col">Sell</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td scope="row">Dollars</td>
-              <td>{{ wallet.dollars }}</td>
-              <td>{{ wallet.dollars }}</td>
-              <td></td>
-            </tr>
-          </tbody>
-          <tbody *ngFor="let coin of wallet.coins">
-            <tr
-              *ngIf="
-                getCoinValue(coin.id, coin.ammount) > MINIMUM_DISPLAY_VALUE
-              "
-            >
-              <td scope="row">{{ getCoinName(coin.id) }}</td>
-              <td>{{ coin.ammount }}</td>
-              <td>{{ getCoinValue(coin.id, coin.ammount) }}</td>
-              <td>
-                <button
-                  class="btn-danger btn-sm btn"
-                  (click)="openSellingCoin(sellCoin)"
-                >
-                  <i class="fa fa-dollar toSell"></i>
-                </button>
-                <ng-template #sellCoin>
-                  <div class="modal-header">
-                    <h4 class="modal-title pull-left">
-                      Sell {{ getCoinName(coin.id) }}
-                    </h4>
-                    <button
-                      type="button"
-                      class="close pull-right"
-                      aria-label="Close"
-                      (click)="sellingCoin.hide()"
-                    >
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <form
-                      (submit)="onSellCoin(sellCoinForm, coin.id, wallet.id)"
-                      #sellCoinForm="ngForm"
-                    >
-                      <input
-                        name="ammount"
-                        [ngClass]="{
-                          'is-invalid':
-                            ammountInput.errors && ammountInput.touched
-                        }"
-                        class="form-control"
-                        ngModel
-                        placeholder="{{ getCoinSymbol(coin.id) }} to sell"
-                        type="number"
-                        #ammountInput="ngModel"
-                        required
-                        [max]="coin.ammount"
-                        ng-pattern="integerval"
-                      />
-                      <p [hidden]="!(sellCoinForm.value.ammount > 0)">
-                        Value: ${{
-                          getCoinValue(coin.id, sellCoinForm.value.ammount)
-                            | number: "1.2-2"
-                        }}
-                      </p>
-                      <div
-                        [hidden]="!ammountInput.errors?.required"
-                        class="invalid-feedback"
-                      >
-                        Must add an input
-                      </div>
-                      <div
-                        [hidden]="!ammountInput.errors?.max"
-                        class="invalid-feedback"
-                      >
-                        You can only sell a maximum of {{ coin.ammount }}
-                        {{ getCoinSymbol(coin.id) }}
-                      </div>
-                      <button class="btn btn-block btn-danger mt-3" type="submit">
-                        Sell Coin
-                      </button>
-                    </form>
-                  </div>
-                </ng-template>
-              </td>
-            </tr>
-          </tbody>
-          <tr>
-            <th scope="row">Total Value</th>
-            <td>~</td>
-            <td>{{ findTotalValue(wallet.id) }}</td>
-            <td></td>
-          </tr>
-        </table>
-      </tab>
+<div *ngIf="curWallet && wallets && currencies && !isLoading">
+  <div class="form-group container" id="walletOptions">
+    <div class="input-group" id="walletSelect">
+      <select [(ngModel)]="curWallet" (ngModelChange) = "onChangeWallet($event)" class="form-control">
+        <option *ngFor="let wallet of wallets" [ngValue]="wallet">{{
+          wallet.name
+        }}</option>
+      </select>
+      <button class="btn-info btn input-group-btn" (click) = "openNameWallet(nameWallet)">
+        <i class="fa fa-pencil"></i>
+      </button>
+      <button class="btn-danger btn input-group-btn" (click) = "onDeleteWallet()">
+          <i class="fa fa-trash"></i>
+        </button>
     </div>
-  </tabset>
+    <button class="btn-dark btn" (click)="openCreateWallet(addWallet)">
+      New Wallet
+    </button>
+  </div>
+  <ng-template #addWallet>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">New Wallet</h4>
+      <button
+        type="button"
+        class="close pull-right"
+        aria-label="Close"
+        (click)="creatingWallet.hide()"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form (submit)="onCreateWallet(addWalletForm)" #addWalletForm="ngForm">
+        <input
+          name="name"
+          [ngClass]="{
+            'is-invalid': nameInput.errors && nameInput.touched
+          }"
+          class="form-control"
+          ngModel
+          placeholder="Wallet Name"
+          #nameInput="ngModel"
+          required
+        />
+        <div [hidden]="!nameInput.errors?.required" class="invalid-feedback">
+          Must add a name
+        </div>
+        <button
+          class="btn btn-block btn-danger mt-3"
+          type="submit"
+          [disabled]="!addWalletForm.form.valid"
+        >
+          Add Wallet
+        </button>
+      </form>
+    </div>
+  </ng-template>
+  <ng-template #nameWallet>
+      <div class="modal-header">
+        <h4 class="modal-title pull-left">Change Wallet Name</h4>
+        <button
+          type="button"
+          class="close pull-right"
+          aria-label="Close"
+          (click)="walletName.hide()"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form (submit)="onChangeName(nameWalletForm)" #nameWalletForm="ngForm">
+          <input
+            name="name"
+            [ngClass]="{
+              'is-invalid': nameInput.errors && nameInput.touched
+            }"
+            class="form-control"
+            [ngModel] = "curWallet.name"
+            value = "curWallet.name"
+            #nameInput="ngModel"
+            required
+          />
+          <div [hidden]="!nameInput.errors?.required" class="invalid-feedback">
+            Must add a name
+          </div>
+          <button
+            class="btn btn-block btn-danger mt-3"
+            type="submit"
+            [disabled]="!nameWalletForm.form.valid"
+          >
+            Change Name
+          </button>
+        </form>
+      </div>
+    </ng-template>
+  <div class="container card">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Coin</th>
+          <th scope="col">Ammount</th>
+          <th scope="col">Value($)</th>
+          <th scope="col">Sell</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td scope="row">Dollars</td>
+          <td>{{ curWallet.dollars }}</td>
+          <td>{{ curWallet.dollars }}</td>
+          <td></td>
+        </tr>
+      </tbody>
+      <tbody *ngFor="let coin of curWallet.coins">
+        <tr *ngIf="getCoinValue(coin.id, coin.ammount) > MINIMUM_DISPLAY_VALUE">
+          <td scope="row">{{ getCoinName(coin.id) }}</td>
+          <td>{{ coin.ammount }}</td>
+          <td>{{ getCoinValue(coin.id, coin.ammount) }}</td>
+          <td>
+            <button
+              class="btn-danger btn-sm btn"
+              (click)="openSellingCoin(sellCoin)"
+            >
+              <i class="fa fa-dollar toSell"></i>
+            </button>
+            <ng-template #sellCoin>
+              <div class="modal-header">
+                <h4 class="modal-title pull-left">
+                  Sell {{ getCoinName(coin.id) }}
+                </h4>
+                <button
+                  type="button"
+                  class="close pull-right"
+                  aria-label="Close"
+                  (click)="sellingCoin.hide()"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form
+                  (submit)="onSellCoin(sellCoinForm, coin.id, curWallet.id)"
+                  #sellCoinForm="ngForm"
+                >
+                  <input
+                    name="ammount"
+                    [ngClass]="{
+                      'is-invalid': ammountInput.errors && ammountInput.touched
+                    }"
+                    class="form-control"
+                    ngModel
+                    placeholder="{{ getCoinSymbol(coin.id) }} to sell"
+                    type="number"
+                    #ammountInput="ngModel"
+                    required
+                    [max]="coin.ammount"
+                    ng-pattern="integerval"
+                  />
+                  <p [hidden]="!(sellCoinForm.value.ammount > 0)">
+                    Value: ${{
+                      getCoinValue(coin.id, sellCoinForm.value.ammount)
+                        | number: "1.2-2"
+                    }}
+                  </p>
+                  <div
+                    [hidden]="!ammountInput.errors?.required"
+                    class="invalid-feedback"
+                  >
+                    Must add an input
+                  </div>
+                  <div
+                    [hidden]="!ammountInput.errors?.max"
+                    class="invalid-feedback"
+                  >
+                    You can only sell a maximum of {{ coin.ammount }}
+                    {{ getCoinSymbol(coin.id) }}
+                  </div>
+                  <button
+                    class="btn btn-block btn-danger mt-3"
+                    [disabled]="!sellCoinForm.form.valid"
+                    type="submit"
+                  >
+                    Sell Coin
+                  </button>
+                </form>
+              </div>
+            </ng-template>
+          </td>
+        </tr>
+      </tbody>
+      <tr>
+        <th scope="row">Total Value</th>
+        <td>~</td>
+        <td>{{ findTotalValue(curWallet.id) }}</td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
 </div>

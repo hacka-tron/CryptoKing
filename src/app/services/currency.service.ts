@@ -11,6 +11,7 @@ import { Wallet } from "../components/models/Wallet";
 const BACKEND_COIN_URL = environment.backendApiUrl + "/coins";
 const BACKEND_WALLET_URL = environment.backendApiUrl + "/wallets";
 const BACKEND_LEADER_BOARD_URL = environment.backendApiUrl + "/leaderboards";
+const BACKEND_USER_URL = environment.backendApiUrl + "/user";
 const CURRENCIES_URL = environment.currencyApiUrl;
 
 @Injectable({
@@ -159,13 +160,39 @@ export class CurrencyService {
       });
   }
 
-  findItemById(id: number | string, inArr: Array<any>) {
-    for (var i = 0; i < inArr.length; i++) {
-      if (inArr[i].id == id) {
-        return inArr[i];
-      }
-    }
-    return null;
+  changeActiveWallet(activeWalletId: string) {
+    const changeWalletInfo = {
+      walletId: activeWalletId
+    };
+    this.http
+      .put<{ message: string; curWalletId: string }>(
+        BACKEND_USER_URL + "/changeCurWallet",
+        changeWalletInfo
+      )
+      .subscribe(response => {
+        this.activeWalletId = response.curWalletId;
+        this.activeWalletIdUpdated.next(this.activeWalletId);
+      });
+  }
+
+  deleteWallet(walletId: string){
+    this.http.delete<{message: string}>(BACKEND_WALLET_URL+ "/"+walletId).subscribe(response =>{
+      this.getActiveWalletId();
+      this.getWallets();
+    })
+  }
+  changeWalletName(name: string, walletId: string) {
+    const walletInfo = {
+      name: name
+    };
+    this.http
+      .put<{ message: string; wallet: any }>(
+        BACKEND_WALLET_URL + "/changeName/" + walletId,
+        walletInfo
+      )
+      .subscribe(response => {
+        this.getWallets();
+      });
   }
 
   findTotalValue(walletId: string) {
@@ -180,6 +207,14 @@ export class CurrencyService {
     return total;
   }
 
+  findActiveWalletById(activeWalletId: string) {
+    for (let wallet of this.wallets) {
+      if (activeWalletId == wallet.id) {
+        return wallet;
+      }
+    }
+    return;
+  }
   getUpdatedCurrenciesListner() {
     return this.currenciesUpdated.asObservable();
   }
@@ -193,5 +228,24 @@ export class CurrencyService {
   }
   getUpdatedDollarListerner() {
     return this.dollarsUpdated.asObservable();
+  }
+  findItemById(id: number | string, inArr: Array<any>) {
+    for (var i = 0; i < inArr.length; i++) {
+      if (inArr[i].id == id) {
+        return inArr[i];
+      }
+    }
+    return null;
+  }
+  createWallet(name: string, dollars: number) {
+    const walletData = {
+      name: name,
+      dollars: dollars
+    };
+    this.http
+      .post<{ message: string; wallet: any }>(BACKEND_WALLET_URL, walletData)
+      .subscribe(response => {
+        this.getWallets();
+      });
   }
 }

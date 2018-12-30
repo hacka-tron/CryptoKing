@@ -4,8 +4,6 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const Wallet = require("../models/wallet");
 
-
-
 //Adds a user to the database
 exports.createUser = (req, res, next) => {
   //Create a hash of the incoming password using bcrypt
@@ -22,15 +20,19 @@ exports.createUser = (req, res, next) => {
           owner: createdUser._id,
           name: "Default",
           dollars: 1000
-        })
-        wallet.save().then(createdWallet =>{
-          User.updateOne({_id: createdUser._id}, {"curWallet": createdWallet._id}, {upsert: true}).then(finishedUser =>{
+        });
+        wallet.save().then(createdWallet => {
+          User.updateOne(
+            { _id: createdUser._id },
+            { curWallet: createdWallet._id },
+            { upsert: true }
+          ).then(finishedUser => {
             res.status(201).json({
               message: "User Created",
               user: createdUser
             });
-          })
-        })
+          });
+        });
       })
       .catch(err => {
         res.status(500).json({
@@ -79,4 +81,14 @@ exports.userLogin = (req, res, next) => {
     });
 };
 
-
+exports.changeCurWallet = (req, res, next) => {
+  User.updateOne(
+    { _id: req.userData.userId },
+    { $set: { curWallet: req.body.walletId } }
+  ).then(updatedUser => {
+    res.status(200).json({
+      message: "User curWallet set successfully",
+      curWalletId: req.body.walletId
+    });
+  });
+};

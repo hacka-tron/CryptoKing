@@ -22,7 +22,7 @@
         #passwordInput="ngModel"
         required
       />
-      <button class="btn btn-block btn-dark mt-3" type="submit">Login!</button>
+      <button class="btn btn-block btn-dark mt-3" [disabled]="!loginForm.form.valid" type="submit">Login!</button>
       <p>Need to create an account? <a routerLink="/signup">Signup!</a></p>
     </div>
   </form>

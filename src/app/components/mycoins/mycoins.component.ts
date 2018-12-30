@@ -16,15 +16,19 @@ import { Subscription } from "rxjs";
 })
 export class MycoinsComponent implements OnInit, OnDestroy {
   MINIMUM_DISPLAY_VALUE: number = 1;
+  isLoading: boolean = true;
   curInput: number = 0;
-  sellingCoin: BsModalRef;
-  activeWallet: string;
+  activeWalletId: string;
+  curWallet: Wallet;
   wallets: Wallet[] = [];
   currencies: Currency[];
-  isLoading: boolean = false;
+  sellingCoin: BsModalRef;
+  creatingWallet: BsModalRef;
+  walletName: BsModalRef;
 
   private walletListenerSubs: Subscription;
   private currencyListenerSubs: Subscription;
+  private activeWalletIdSubs: Subscription;
 
   constructor(
     private currencyService: CurrencyService,
@@ -34,9 +38,20 @@ export class MycoinsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.currencyService.getCurrencies();
     this.currencyService.getWallets();
+
+    this.activeWalletIdSubs = this.currencyService
+      .getUpdatedActiveWalletIdListner()
+      .subscribe(activeWalletId => {
+        this.activeWalletId = activeWalletId;
+        this.curWallet = this.currencyService.findActiveWalletById(
+          this.activeWalletId
+        );
+        this.isLoading = false;
+      });
     this.walletListenerSubs = this.currencyService
       .getUpdatedWalletsListner()
       .subscribe(wallets => {
+        this.currencyService.getActiveWalletId();
         this.isLoading = false;
         this.wallets = wallets;
       });
@@ -63,6 +78,7 @@ export class MycoinsComponent implements OnInit, OnDestroy {
   findTotalValue(walletId: string) {
     return this.currencyService.findTotalValue(walletId);
   }
+
   onSellCoin(form: NgForm, coinId, walletId) {
     if (confirm("Are You Sure?")) {
       this.isLoading = true;
@@ -70,12 +86,43 @@ export class MycoinsComponent implements OnInit, OnDestroy {
       this.sellingCoin.hide();
     }
   }
-
+  onChangeName(form: NgForm, walletId: string) {
+    if (confirm("Are You Sure?")) {
+      this.isLoading = true;
+      this.currencyService.changeWalletName(form.value.name, this.curWallet.id);
+      this.walletName.hide();
+    }
+  }
+  onCreateWallet(form: NgForm) {
+    if (confirm("Are You Sure?")) {
+      this.isLoading = true;
+      this.currencyService.createWallet(form.value.name, 1000);
+      this.creatingWallet.hide();
+    }
+  }
+  onChangeWallet(newCurWallet: Wallet) {
+    this.isLoading = true;
+    this.currencyService.changeActiveWallet(newCurWallet.id);
+  }
+  onDeleteWallet() {
+    if (confirm("Are You Sure?")) {
+      this.isLoading = true;
+      this.currencyService.deleteWallet(this.curWallet.id);
+    }
+  }
   openSellingCoin(template: TemplateRef<any>) {
     this.sellingCoin = this.modalService.show(template);
   }
+  openCreateWallet(template: TemplateRef<any>) {
+    this.creatingWallet = this.modalService.show(template);
+  }
+  openNameWallet(template: TemplateRef<any>) {
+    this.walletName = this.modalService.show(template);
+  }
+
   ngOnDestroy() {
     this.walletListenerSubs.unsubscribe();
     this.currencyListenerSubs.unsubscribe();
+    this.activeWalletIdSubs.unsubscribe();
   }
 }

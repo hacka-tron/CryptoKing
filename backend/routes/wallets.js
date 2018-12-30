@@ -16,8 +16,8 @@ router.get("/:id", checkAuth, WalletController.getWallet);
 
 router.post("", checkAuth, WalletController.createWallet);
 
-//router.put("", checkAuth, WalletController.updateDollars);
+router.put("/changeName/:id", checkAuth, WalletController.updateName);
 
-//router.delete("/:id", checkAuth, WalletController.removeWallet)
+router.delete("/:id", checkAuth, WalletController.removeWallet)
 
 module.exports = router;
