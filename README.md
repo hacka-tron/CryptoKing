@@ -48,11 +48,11 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 * ~~Add leader board feature~~
 * ~~Fix up sell coin UI~~
 * ~~Add loading spinner when resources loading~~
-* Add the ability to create multiple wallets
-* Add the ability to rename wallets
-* Add the ability to remove wallets
-* Add more descriptive errors
+* ~~Add the ability to create multiple wallets~~
+* ~~Add the ability to rename wallets~~
+* ~~Add the ability to remove wallets~~
 * Add the ability to choose the initial dollar ammount
+* Add more descriptive errors
 * Add graphs and tools to track portfolio 
 * Overall UI work(Will be expanded later, focusing on functionality at the moment)
 
