@@ -4,10 +4,6 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## Development server
 
-CURRENTLY UNDER CONSTRUCTION. 
-
-Not all features will work. If you want to see a finished product, go to the production server. 
-
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files. 
 
 ## Backend server
