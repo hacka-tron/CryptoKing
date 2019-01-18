@@ -1,6 +1,7 @@
 const Coin = require("../models/coin");
+const Wallet = require("../models/wallet");
 const User = require("../models/user");
-const Currencies = require("./helpers/currencies")
+const Currencies = require("./helpers/currencies");
 
 //Returns the position of the user with the given userName in the leaderBoard
 function userPos(userName, leaderBoard) {
@@ -12,9 +13,9 @@ function userPos(userName, leaderBoard) {
   return -1;
 }
 
-function findUserNameByEmail(email, users) {
+function findUserByWallet(walletOwner, users) {
   var user = users.find(user => {
-    return user.email === email;
+    return walletOwner == user._id;
   });
   if (user) {
     return user.userName;
@@ -22,33 +23,35 @@ function findUserNameByEmail(email, users) {
   return undefined;
 }
 exports.getLeaderBoard = (req, res, next) => {
-  Coin.find().then(coins => {
-    User.find().then(users => {
-      Currencies.getCurrencies(function(currencies) {
-        const leaderBoard = [];
-        for (coin of coins) {
-          const userName = findUserNameByEmail(coin.creator, users);
-          const curPos = userPos(userName, leaderBoard);
-          const coinPrice = Currencies.getCoinPrice(coin.id, currencies);
-          coinValue = coin.ammount * coinPrice;
-          if (curPos == -1) {
-            leaderBoard.push({ userName: userName, netWorth: coinValue });
-          } else {
-            leaderBoard[curPos].netWorth += coinValue;
+  User.find().then(users => {
+    Wallet.find().then(wallets => {
+      Coin.find().then(coins => {
+        Currencies.getCurrencies(currencies => {
+          var walletInfo = [];
+          const leaderBoard = [];
+          for (wallet of wallets) {
+            walletCoins = coins.filter(coin => coin.wallet == wallet._id);
+            walletInfo.push([
+              wallet.owner,
+              Currencies.getWalletValue(wallet.dollars, walletCoins, currencies)
+            ]);
           }
-        }
-        leaderBoard.sort(function(a, b) {
-          return b.netWorth - a.netWorth;
+          for (wallet of walletInfo) {
+            leaderBoard.push({
+              userName: findUserByWallet(wallet[0], users),
+              walletWorth: wallet[1]
+            });
+          }
+          leaderBoard.sort((wallet1, wallet2) =>{return wallet2.walletWorth-wallet1.walletWorth})
+          for (var i =0; i<leaderBoard.length;i++){
+            leaderBoard[i]["rank"] = i+1
+          }
+          if (leaderBoard) {
+            res.status(200).json({ leaderBoard: leaderBoard });
+          } else {
+            res.status(404).json({ message: "Leaderboard Not Created!" });
+          }
         });
-        for (let i = 0; i < leaderBoard.length; i++) {
-          leaderBoard[i].rank = i + 1;
-        }
-
-        if (leaderBoard) {
-          res.status(200).json({ leaderBoard: leaderBoard });
-        } else {
-          res.status(404).json({ message: "Leaderboard Not Created!" });
-        }
       });
     });
   });

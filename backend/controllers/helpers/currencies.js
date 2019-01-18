@@ -10,16 +10,18 @@ exports.getCurrencies = function(callback) {
     apiResponse = JSON.parse(body);
     return callback(apiResponse.data);
   });
-}
+};
 
 //Returns the price of a given currency in the list of currencies
-exports.getCoinPrice = function(id, currencies) {
-  if (id != 0) {
-    var coinInfo = currencies.find(coin => {
-      return coin.id === id;
+exports.getWalletValue = (dollars, wallet, currencies) => {
+  var totalValue = dollars;
+  for (coin of wallet) {
+    coinInfo = currencies.find(currency => {
+      return currency.id == coin.id;
     });
-    return coinInfo.quotes.USD.price;
+    if (coinInfo) {
+      totalValue += coin.ammount * coinInfo.quotes.USD.price;
+    }
   }
-  //if the coin isnt in the list of currencies, return -1
-  return -1;
-}
+  return totalValue;
+};

@@ -7,7 +7,7 @@ import { CurrencyService } from '../../services/currency.service';
   styleUrls: ['./leader-board.component.css']
 })
 export class LeaderBoardComponent implements OnInit {
-  leaderBoard: {userName: string, netWorth: number, rank: number}[];
+  leaderBoard: {userName: string, walletWorth: number, rank: number}[];
   constructor(private currencyService: CurrencyService) { }
 
   ngOnInit() {

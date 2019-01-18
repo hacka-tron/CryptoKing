@@ -4,14 +4,14 @@
       <tr>
         <th scope="col">#</th>
         <th scope="col">User Name</th>
-        <th scope="col">Net Worth</th>
+        <th scope="col">Wallet Worth</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let stats of leaderBoard">
         <th scope="row"> {{stats.rank}}</th>
         <td>{{stats.userName}}</td>
-        <td>{{stats.netWorth | currency}}</td>
+        <td>{{stats.walletWorth | currency}}</td>
       </tr>
     </tbody>
   </table>
