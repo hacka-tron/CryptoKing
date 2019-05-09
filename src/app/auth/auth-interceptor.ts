@@ -9,7 +9,7 @@ import { AuthService } from "../services/auth.service";
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  private urlsToWhiteList: string[] = ["https://api.coinmarketcap.com"];
+  private urlsToWhiteList: string[] = ["https://pro-api.coinmarketcap.com"];
 
   constructor(private authService: AuthService) {}
 

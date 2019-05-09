@@ -4,8 +4,7 @@
 
 export const environment = {
   production: false,
-  backendApiUrl: "http://localhost:3000/api",
-  currencyApiUrl: "https://api.coinmarketcap.com/v2/ticker/?structure=array"
+  backendApiUrl: "http://localhost:3000/api"
 
 };
 

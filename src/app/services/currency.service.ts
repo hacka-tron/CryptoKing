@@ -12,7 +12,7 @@ const BACKEND_COIN_URL = environment.backendApiUrl + "/coins";
 const BACKEND_WALLET_URL = environment.backendApiUrl + "/wallets";
 const BACKEND_LEADER_BOARD_URL = environment.backendApiUrl + "/leaderboards";
 const BACKEND_USER_URL = environment.backendApiUrl + "/user";
-const CURRENCIES_URL = environment.currencyApiUrl;
+const BACKEND_CURRENCY_URL = environment.backendApiUrl + "/cmc";
 
 @Injectable({
   providedIn: "root"
@@ -64,11 +64,11 @@ export class CurrencyService {
 
   getCurrencies() {
     return this.http
-      .get<{ data: any; metadata: any }>(CURRENCIES_URL)
+      .get<{ currencies: any; }>(BACKEND_CURRENCY_URL)
       .pipe(
         map(curData => {
           //Only the .data attribute is what we are interested in
-          return curData.data.map(curCurrency => {
+          return curData.currencies.map(curCurrency => {
             return {
               id: curCurrency.id,
               name: curCurrency.name,
@@ -78,12 +78,12 @@ export class CurrencyService {
               total_supply: curCurrency.total_supply,
               max_supply: curCurrency.max_supply,
               USD: {
-                price: curCurrency.quotes.USD.price,
-                volume_24h: curCurrency.quotes.USD.volume_24h,
-                market_cap: curCurrency.quotes.USD.market_cap,
-                percent_change_1h: curCurrency.quotes.USD.percent_change_1h,
-                percent_change_24h: curCurrency.quotes.USD.percent_change_24h,
-                percent_change_7d: curCurrency.quotes.USD.percent_change_7d
+                price: curCurrency.quote.USD.price,
+                volume_24h: curCurrency.quote.USD.volume_24h,
+                market_cap: curCurrency.quote.USD.market_cap,
+                percent_change_1h: curCurrency.quote.USD.percent_change_1h,
+                percent_change_24h: curCurrency.quote.USD.percent_change_24h,
+                percent_change_7d: curCurrency.quote.USD.percent_change_7d
               }
             };
           });

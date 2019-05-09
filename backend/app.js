@@ -6,14 +6,15 @@ const coinRoutes = require("./routes/coins");
 const userRoutes = require("./routes/users");
 const walletRoutes = require("./routes/wallets")
 const leaderBoardRoutes = require("./routes/leader-boards");
+const cmcRoutes = require("./routes/cmc");
 
 const app = express();
 
 mongoose
   .connect(
     "mongodb+srv://Dude:" +
-      process.env.MONGO_ATLAS_PW +
-      "@cluster0-yianf.mongodb.net/crypto-data?retryWrites=true",
+    process.env.MONGO_ATLAS_PW +
+    "@cluster0-yianf.mongodb.net/crypto-data?retryWrites=true",
     { useNewUrlParser: true }
   )
   .then(() => {
@@ -42,6 +43,7 @@ app.use((req, res, next) => {
 app.use("/api/coins", coinRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/leaderboards", leaderBoardRoutes);
-app.use("/api/wallets", walletRoutes)
+app.use("/api/wallets", walletRoutes);
+app.use("/api/cmc", cmcRoutes);
 
 module.exports = app;
