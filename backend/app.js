@@ -10,17 +10,21 @@ const cmcRoutes = require("./routes/cmc");
 
 const app = express();
 
+const db_name = process.env.MONGO_DB_NAME
+
+const prod_uri = `mongodb+srv://${process.env.MONGO_PROD_USER}:${process.env.MONGO_PROD_PW}@cluster.${process.env.MONGO_CLUSTER_PATH}.mongodb.net/?retryWrites=true&w=majority&appName=${process.env.MONGO_CLUSTER_NAME}`;
+
+const dev_uri = `mongodb://localhost:${process.env.MONGO_LOCAL_PORT}/${db_name}?retryWrites=true`;
+
 mongoose
   .connect(
-    "mongodb+srv://Dude:" +
-    process.env.MONGO_ATLAS_PW +
-    "@cluster0-yianf.mongodb.net/crypto-data?retryWrites=true",
-    { useNewUrlParser: true }
+    process.env.ENV == 'prod' ? prod_uri : dev_uri,
   )
   .then(() => {
     console.log("Connected to database!");
   })
-  .catch(() => {
+  .catch((e) => {
+    console.log(e);
     console.log("Connection failed!");
   });
 

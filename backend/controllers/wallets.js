@@ -100,6 +100,7 @@ exports.removeWallet = (req, res, next) => {
     }
   });
 };
+
 ///Update the name of a wallet in the database belonging to the current user
 exports.updateName = (req, res, next) => {
   Wallet.updateOne({ _id: req.params.id }, { $set: { name: req.body.name } })

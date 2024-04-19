@@ -2,6 +2,7 @@ const Coin = require("../models/coin");
 const Wallet = require("../models/wallet");
 const User = require("../models/user");
 const Currencies = require("./helpers/currencies");
+const WalletHelper = require("./helpers/wallet");
 
 //Returns the position of the user with the given userName in the leaderBoard
 function userPos(userName, leaderBoard) {
@@ -33,7 +34,7 @@ exports.getLeaderBoard = (req, res, next) => {
             walletCoins = coins.filter(coin => coin.wallet == wallet._id);
             walletInfo.push([
               wallet.owner,
-              Currencies.getWalletValue(wallet.dollars, walletCoins, currencies)
+              WalletHelper.getWalletValue(wallet.dollars, walletCoins, currencies)
             ]);
           }
           for (wallet of walletInfo) {
