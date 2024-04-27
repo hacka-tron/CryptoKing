@@ -14,6 +14,8 @@ const BACKEND_LEADER_BOARD_URL = environment.backendApiUrl + "/leaderboards";
 const BACKEND_USER_URL = environment.backendApiUrl + "/user";
 const BACKEND_CURRENCY_URL = environment.backendApiUrl + "/cmc";
 
+
+// TODO: Split out this service into two services (one for cmc communications and one for currency management)
 @Injectable({
   providedIn: "root"
 })
