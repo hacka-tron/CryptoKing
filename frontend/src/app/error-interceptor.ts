@@ -8,7 +8,7 @@ import { Injectable } from "@angular/core";
 
 import { catchError } from "rxjs/operators";
 import { throwError } from "rxjs";
-import { MatDialog } from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 import { ErrorComponent } from "./components/error/error.component";
 import { ErrorService } from "./services/error.service";
 

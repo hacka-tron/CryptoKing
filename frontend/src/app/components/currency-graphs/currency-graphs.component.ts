@@ -16,7 +16,7 @@ export class CurrencyGraphsComponent implements OnInit {
   min: number;
   max: number;
 
-  constructor(private currencyService: CurrencyService) {}
+  constructor(private currencyService: CurrencyService) { }
 
   ngOnInit() {
     this.currencyService.getCurrencies();
@@ -37,7 +37,7 @@ export class CurrencyGraphsComponent implements OnInit {
               data: this.currencies
                 .map(cur => cur.USD.market_cap)
                 .slice(this.min, this.max),
-              backgroundColor: this.sameColorArray(
+              backgroundColor: sameColorArray(
                 "rgba(0, 0, 255, 0.3)",
                 this.max - this.min
               )
@@ -47,7 +47,7 @@ export class CurrencyGraphsComponent implements OnInit {
               data: this.currencies
                 .map(cur => cur.USD.volume_24h)
                 .slice(this.min, this.max),
-              backgroundColor: this.sameColorArray(
+              backgroundColor: sameColorArray(
                 "rgba(0, 255, 0, 0.3)",
                 this.max - this.min
               )
@@ -55,51 +55,47 @@ export class CurrencyGraphsComponent implements OnInit {
           ]
         },
         options: {
-          tooltips: {
-            callbacks: {
-              title: function() {
-                return "";
-              },
-              label: function(item) {
-                return (
-                  item["xLabel"] +
-                  ": $" +
-                  parseInt(item["yLabel"], 10)
-                    .toString()
-                    .split(/(?=(?:...)*$)/)
-                    .join(",")
-                );
+          plugins: {
+            tooltip: {
+              callbacks: {
+                title: function () {
+                  return "";
+                },
+                label: function (context) {
+                  return (
+                    context.parsed.x +
+                    ": $" +
+                    context.parsed.y.toLocaleString()
+                  );
+                }
               }
             }
           },
           scales: {
-            yAxes: [
-              {
-                ticks: {
-                  // Include a dollar sign in the ticks
-                  callback: function(value, index, values) {
-                    return (
-                      "$" +
-                      parseInt(value, 10)
-                        .toString()
-                        .split(/(?=(?:...)*$)/)
-                        .join(",")
-                    );
-                  }
+            y: {
+              ticks: {
+                // Include a dollar sign in the ticks
+                callback: function (value, index, values) {
+                  return "$" + value.toLocaleString();
                 }
+              },
+              title: {
+                display: true,
+                text: "Value in USD" // Add a title for the y-axis
               }
-            ]
+            }
           }
+
         }
       });
     });
   }
+}
 
-  sameColorArray(color: string, num: number) {
-    var colorArr = [];
-    for (var i = 0; i < num; i++) {
-      colorArr[i] = color;
-    }
-    return colorArr;
+function sameColorArray(color: string, num: number) {
+  var colorArr = [];
+  for (var i = 0; i < num; i++) {
+    colorArr[i] = color;
   }
+  return colorArr;
 }

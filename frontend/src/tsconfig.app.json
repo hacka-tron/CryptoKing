@@ -5,6 +5,7 @@
     "module": "es2015",
     "types": []
   },
+  "enableIvy": false,
   "exclude": [
     "src/test.ts",
     "**/*.spec.ts"

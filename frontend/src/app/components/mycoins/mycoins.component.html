@@ -34,22 +34,18 @@
       <form (submit)="onCreateWallet(addWalletForm)" #addWalletForm="ngForm">
         <input
           name="name"
-          [ngClass]="{
-            'is-invalid': nameInput.errors && nameInput.touched
-          }"
+          [(ngModel)]="curWallet.name"
           class="form-control"
-          ngModel
           placeholder="Wallet Name"
-          #nameInput="ngModel"
           required
         />
-        <div [hidden]="!nameInput.errors?.required" class="invalid-feedback">
+        <div *ngIf="addWalletForm.controls.name.invalid && addWalletForm.controls.name.touched" class="invalid-feedback">
           Must add a name
         </div>
         <button
           class="btn btn-block btn-danger mt-3"
           type="submit"
-          [disabled]="!addWalletForm.form.valid"
+          [disabled]="addWalletForm.invalid"
         >
           Add Wallet
         </button>
@@ -139,46 +135,31 @@
                 </button>
               </div>
               <div class="modal-body">
-                <form
-                  (submit)="onSellCoin(sellCoinForm, coin.id, curWallet.id)"
-                  #sellCoinForm="ngForm"
-                >
+                <form (submit)="onSellCoin(sellCoinForm, coin.id, curWallet.id)" #sellCoinForm="ngForm">
                   <input
                     name="ammount"
-                    [ngClass]="{
-                      'is-invalid': ammountInput.errors && ammountInput.touched
-                    }"
+                    [(ngModel)]="sellCoinForm.value.ammount"
                     class="form-control"
-                    ngModel
                     placeholder="{{ getCoinSymbol(coin.id) }} to sell"
                     type="number"
-                    #ammountInput="ngModel"
                     required
                     [max]="coin.ammount"
-                    ng-pattern="integerval"
+                    pattern="^[0-9]*$"
                   />
-                  <p [hidden]="!(sellCoinForm.value.ammount > 0)">
-                    Value: ${{
-                      getCoinValue(coin.id, sellCoinForm.value.ammount)
-                        | number: "1.2-2"
-                    }}
+                  <div *ngIf="sellCoinForm.controls.ammount.invalid && sellCoinForm.controls.ammount.touched" class="invalid-feedback">
+                    <div *ngIf="sellCoinForm.controls.ammount.errors.required">
+                      Must add an input
+                    </div>
+                    <div *ngIf="sellCoinForm.controls.ammount.errors.max">
+                      You can only sell a maximum of {{ coin.ammount }} {{ getCoinSymbol(coin.id) }}
+                    </div>
+                  </div>
+                  <p *ngIf="sellCoinForm.value.ammount > 0">
+                    Value: ${{ getCoinValue(coin.id, sellCoinForm.value.ammount) | number: '1.2-2' }}
                   </p>
-                  <div
-                    [hidden]="!ammountInput.errors?.required"
-                    class="invalid-feedback"
-                  >
-                    Must add an input
-                  </div>
-                  <div
-                    [hidden]="!ammountInput.errors?.max"
-                    class="invalid-feedback"
-                  >
-                    You can only sell a maximum of {{ coin.ammount }}
-                    {{ getCoinSymbol(coin.id) }}
-                  </div>
                   <button
                     class="btn btn-block btn-danger mt-3"
-                    [disabled]="!sellCoinForm.form.valid"
+                    [disabled]="sellCoinForm.invalid"
                     type="submit"
                   >
                     Sell Coin

@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Subject, Observable } from "rxjs";
+import { HttpClient } from "@angular/common/http";
+import { Subject } from "rxjs";
 import { map } from "rxjs/operators";
 
 import { environment } from "../../environments/environment";

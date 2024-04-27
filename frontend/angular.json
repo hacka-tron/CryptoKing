@@ -30,7 +30,6 @@
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
-              "node_modules/popper.js/dist/umd/popper.js",
               "node_modules/bootstrap/dist/js/bootstrap.js"
             ]
           },
@@ -45,9 +44,8 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
-              "aot": true,
+              "aot": false,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true
@@ -57,18 +55,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "cryptoKing:build"
+            "buildTarget": "cryptoKing:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "cryptoKing:build:production"
+              "buildTarget": "cryptoKing:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "cryptoKing:build"
+            "buildTarget": "cryptoKing:build"
           }
         },
         "test": {
@@ -131,5 +129,7 @@
       }
     }
   },
-  "defaultProject": "cryptoKing"
+  "cli": {
+    "analytics": false
+  }
 }

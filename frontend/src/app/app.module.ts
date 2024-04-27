@@ -2,9 +2,8 @@ import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { FormsModule } from "@angular/forms";
-import { CustomFormsModule } from "ng2-validation";
 import { ChartModule } from "primeng/chart";
-import { MatDialogModule } from "@angular/material";
+import { MatDialogModule } from "@angular/material/dialog";
 import { AppRoutingModule } from ".//app-routing.module";
 
 import { CurrencyService } from "./services/currency.service";
@@ -45,7 +44,6 @@ import { ModalModule } from "ngx-bootstrap/modal";
     HttpClientModule,
     AppRoutingModule,
     FormsModule,
-    CustomFormsModule,
     ChartModule,
     MatDialogModule,
     TabsModule.forRoot(),
@@ -56,7 +54,6 @@ import { ModalModule } from "ngx-bootstrap/modal";
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
   ],
-  bootstrap: [AppComponent],
-  entryComponents: [ErrorComponent]
+  bootstrap: [AppComponent]
 })
 export class AppModule {}
