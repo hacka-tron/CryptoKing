@@ -11,6 +11,7 @@ import { CurrencyService } from "./services/currency.service";
 import { AppComponent } from "./app.component";
 import { NavbarComponent } from "./components/navbar/navbar.component";
 import { CurrenciesComponent } from "./components/currencies/currencies.component";
+import { CurrenciesListComponent } from "./components/currencies-list/currencies-list.component";
 import { NotFoundComponent } from "./components/not-found/not-found.component";
 import { MycoinsComponent } from "./components/mycoins/mycoins.component";
 import { LoginComponent } from "./auth/login/login.component";
@@ -30,6 +31,7 @@ import { ModalModule } from "ngx-bootstrap/modal";
     AppComponent,
     NavbarComponent,
     CurrenciesComponent,
+    CurrenciesListComponent,
     CurrencyGraphsComponent,
     NotFoundComponent,
     MycoinsComponent,

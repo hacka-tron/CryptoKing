@@ -21,15 +21,18 @@ export class CurrencyService {
   //This is the list of currencies that we get from the api
   private currencies: Currency[] = [];
 
+  private favorites = new Set<Currency>();
+
   private activeWalletId: string;
 
   private wallets: Wallet[] = [];
 
-  //This is the current dollar ammount in the active wallet
-  private dollars: number = 0;
-
   //Registers change in currencies
   private currenciesUpdated = new Subject<Currency[]>();
+
+  private favoritesUpdated = new Subject<Currency[]>();
+
+  private favoritesMoreThanZeroUpdated = new Subject<boolean>();
 
   private walletsUpdated = new Subject<Wallet[]>();
 
@@ -73,7 +76,7 @@ export class CurrencyService {
               id: curCurrency.id,
               name: curCurrency.name,
               symbol: curCurrency.symbol,
-              rank: curCurrency.rank,
+              rank: curCurrency.cmc_rank,
               circulating_supply: curCurrency.circulating_supply,
               total_supply: curCurrency.total_supply,
               max_supply: curCurrency.max_supply,
@@ -107,6 +110,7 @@ export class CurrencyService {
         }
       });
   }
+  
   getDollars() {
     this.http
       .get<{ message: string; dollars: number }>(
@@ -114,10 +118,26 @@ export class CurrencyService {
       )
       .subscribe(response => {
         if (response.dollars) {
-          this.dollars = response.dollars;
-          this.dollarsUpdated.next(this.dollars);
+          this.dollarsUpdated.next(response.dollars);
         }
       });
+  }
+
+  addFavorite(currency: Currency){
+    this.favorites.add(currency);
+    this.favoritesUpdated.next([...this.favorites]);
+    if (this.favorites.size==1){
+      this.favoritesMoreThanZeroUpdated.next(true);
+    }
+    
+  }
+
+  removeFavorite(currency: Currency){
+    this.favorites.delete(currency);
+    this.favoritesUpdated.next([...this.favorites]);
+    if (this.favorites.size==0){
+      this.favoritesMoreThanZeroUpdated.next(false);
+    }
   }
 
   getLeaderBoard() {
@@ -137,8 +157,7 @@ export class CurrencyService {
       )
       .subscribe(response => {
         this.getWallets();
-        this.dollars = response.dollars;
-        this.dollarsUpdated.next(this.dollars);
+        this.dollarsUpdated.next(response.dollars);
       });
   }
 
@@ -155,8 +174,19 @@ export class CurrencyService {
       )
       .subscribe(response => {
         this.getWallets();
-        this.dollars = response.dollars;
-        this.dollarsUpdated.next(this.dollars);
+        this.dollarsUpdated.next(response.dollars);
+      });
+  }
+
+  createWallet(name: string, dollars: number) {
+    const walletData = {
+      name: name,
+      dollars: dollars
+    };
+    this.http
+      .post<{ message: string; wallet: any }>(BACKEND_WALLET_URL, walletData)
+      .subscribe(response => {
+        this.getWallets();
       });
   }
 
@@ -181,6 +211,7 @@ export class CurrencyService {
       this.getWallets();
     })
   }
+
   changeWalletName(name: string, walletId: string) {
     const walletInfo = {
       name: name
@@ -215,6 +246,7 @@ export class CurrencyService {
     }
     return;
   }
+
   getUpdatedCurrenciesListner() {
     return this.currenciesUpdated.asObservable();
   }
@@ -226,9 +258,19 @@ export class CurrencyService {
   getUpdatedActiveWalletIdListner() {
     return this.activeWalletIdUpdated.asObservable();
   }
-  getUpdatedDollarListerner() {
+
+  getUpdatedDollarListener() {
     return this.dollarsUpdated.asObservable();
   }
+
+  getUpdatedFavoritesListener() {
+    return this.favoritesUpdated.asObservable();
+  }
+
+  getUpdatedFavoritesMoreThanZeroListener() {
+    return this.favoritesMoreThanZeroUpdated.asObservable();
+  }
+
   findItemById(id: number | string, inArr: Array<any>) {
     for (var i = 0; i < inArr.length; i++) {
       if (inArr[i].id == id) {
@@ -236,16 +278,5 @@ export class CurrencyService {
       }
     }
     return null;
-  }
-  createWallet(name: string, dollars: number) {
-    const walletData = {
-      name: name,
-      dollars: dollars
-    };
-    this.http
-      .post<{ message: string; wallet: any }>(BACKEND_WALLET_URL, walletData)
-      .subscribe(response => {
-        this.getWallets();
-      });
   }
 }

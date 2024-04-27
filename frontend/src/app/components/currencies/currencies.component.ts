@@ -1,77 +1,70 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
-import { CurrencyService } from "../../services/currency.service";
-
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { CurrencyService } from "app/services/currency.service";
+import { Subscription } from "rxjs";
 import { Currency } from "../models/Currencies";
 import { CurrencyProp } from "../models/CurrencyProps";
-import { Subscription } from "rxjs";
-import { AuthService } from "../../services/auth.service";
+import { AuthService } from "app/services/auth.service";
 
 @Component({
   selector: "app-currencies",
   templateUrl: "./currencies.component.html",
-
   styleUrls: ["./currencies.component.css"]
 })
 export class CurrenciesComponent implements OnInit, OnDestroy {
-  dollarAmmount: number;
   currencies: Currency[];
-  /*
-   *This is used to set the properties for each currency, and this isn't saved in the databse as it is going to be *reset anyway up reloads
-   */
   currencyProps: CurrencyProp[] = [];
-  favNum: number = 0;
-  curNum: number = 0;
+  favoriteProps: CurrencyProp[] = [];
+
   userIsAuthenticated = false;
-  userName: string;
+
   curWalletId: string;
-  isLoading: boolean = false;
+  dollarAmmount: number;
+
+  isLoading: boolean =  true;
 
   private authListnerSubs: Subscription;
-  private dollarListnerSubs: Subscription;
-  private walletIdListnerSubs: Subscription;
-  private currencyListenterSubs: Subscription;
+  private dollarListenerSubs: Subscription;
+  private walletIdListenerSubs: Subscription;
+  private currencyListenerSubs: Subscription;
 
   constructor(
     private currencyService: CurrencyService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit() {
+    console.log('doing init');
     //Certains buttons shouldn't appear when loged in/out
     this.userIsAuthenticated = this.authService.getIsAuth();
     this.authListnerSubs = this.authService
       .getAuthStatusListner()
       .subscribe(isAuthenticated => {
-        this.isLoading = false;
         this.userIsAuthenticated = isAuthenticated;
       });
     if (this.userIsAuthenticated) {
       this.currencyService.getDollars();
-      this.dollarListnerSubs = this.currencyService
-        .getUpdatedDollarListerner()
+      this.dollarListenerSubs = this.currencyService
+        .getUpdatedDollarListener()
         .subscribe(dollars => {
-          this.isLoading = false;
           this.dollarAmmount = dollars;
         });
       this.currencyService.getActiveWalletId();
-      this.walletIdListnerSubs = this.currencyService
+      this.walletIdListenerSubs = this.currencyService
         .getUpdatedActiveWalletIdListner()
         .subscribe(activeWalletId => {
-          this.isLoading = false;
           this.curWalletId = activeWalletId;
         });
     }
     this.currencyService.getCurrencies();
-    this.currencyListenterSubs = this.currencyService
-      .getUpdatedCurrenciesListner()
+    this.currencyListenerSubs = this.currencyService.getUpdatedCurrenciesListner()
       .subscribe(currencies => {
-        this.isLoading = false;
         this.currencies = currencies;
+        this.currencyProps = [];
 
         //Adds the properties for the dollar currency
         this.currencies.forEach((cur, index) => {
           this.currencyProps.push({
-            id: cur.id,
+            currency: cur,
             hide: true,
             isFavorite: false,
             toBuy: false,
@@ -79,53 +72,32 @@ export class CurrenciesComponent implements OnInit, OnDestroy {
           });
         });
       });
+      this.isLoading = false;
   }
 
-  buyCoin(ammount: number, coinId: number, walletId: string) {
-    if (confirm("Are You Sure?")) {
-      this.isLoading = true;
-      this.currencyService.buyCoin(ammount, coinId, walletId);
-      const curProp = this.currencyService.findItemById(coinId, this.currencyProps);
-      curProp.beingBought = 0;
-      this.toggleToBuy(curProp);
-    }
+  onFavoritePropAdded(currencyProp: CurrencyProp) {
+    const curPropCopy = structuredClone(currencyProp);
+    curPropCopy.toBuy = false;
+    curPropCopy.hide = true;
+    curPropCopy.beingBought = 0;
+    this.favoriteProps.push(curPropCopy);
   }
 
-  toggleCurrencyHide(currencyProp: CurrencyProp) {
-    if (currencyProp.toBuy) {
-      this.toggleToBuy(currencyProp);
-    }
-    currencyProp.hide = !currencyProp.hide;
-  }
-
-  toggleToBuy(currencyProp: CurrencyProp) {
-    if (!currencyProp.hide) {
-      this.toggleCurrencyHide(currencyProp);
-    }
-    currencyProp.toBuy = !currencyProp.toBuy;
-  }
-
-  toggleFavorites(currencyProp: CurrencyProp) {
-    currencyProp.isFavorite = !currencyProp.isFavorite;
-    if (currencyProp.isFavorite) {
-      this.favNum++;
-    } else {
-      this.favNum--;
-    }
-  }
-
-  private findPropById(id: number) {
-    return this.currencyService.findItemById(id, this.currencyProps);
+  onFavoritePropRemoved(currencyProp: CurrencyProp) {
+    const indOfFavorite = this.favoriteProps.findIndex(curProp => curProp.currency.id == currencyProp.currency.id);
+    this.currencyProps.find(curProp => curProp.currency.id == currencyProp.currency.id).isFavorite = false;
+    this.favoriteProps.splice(indOfFavorite, indOfFavorite + 1);
   }
 
   ngOnDestroy() {
+    console.log('running on destroy');
     this.authListnerSubs.unsubscribe();
-    this.currencyListenterSubs.unsubscribe();
-    if (this.dollarListnerSubs) {
-      this.dollarListnerSubs.unsubscribe();
+    this.currencyListenerSubs.unsubscribe();
+    if (this.dollarListenerSubs) {
+      this.dollarListenerSubs.unsubscribe();
     }
-    if (this.walletIdListnerSubs) {
-      this.walletIdListnerSubs.unsubscribe();
+    if (this.walletIdListenerSubs) {
+      this.walletIdListenerSubs.unsubscribe();
     }
   }
 }

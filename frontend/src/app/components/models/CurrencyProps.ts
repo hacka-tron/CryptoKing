@@ -1,5 +1,7 @@
+import { Currency } from "./Currencies";
+
 export interface CurrencyProp {
-  id: number;
+  currency: Currency;
   hide: boolean;
   isFavorite: boolean;
   toBuy: boolean;

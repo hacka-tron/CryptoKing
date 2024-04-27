@@ -1,0 +1,18 @@
+.isFav {
+    color: yellow;
+  }
+  .toBuy {
+    color: green;
+  }
+  
+  .coinListings {
+    max-width: 600px;
+    text-align: center;
+    margin: auto;
+  }
+  
+  .rank {
+    float: left;
+    color: grey;
+  }
+  
