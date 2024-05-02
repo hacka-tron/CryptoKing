@@ -1,18 +1,38 @@
 .isFav {
-    color: yellow;
-  }
-  .toBuy {
-    color: green;
-  }
-  
-  .coinListings {
-    max-width: 600px;
-    text-align: center;
-    margin: auto;
-  }
-  
-  .rank {
-    float: left;
-    color: grey;
-  }
-  
+  color: yellow;
+}
+
+.toBuy {
+  color: green;
+}
+
+.rank {
+  float: left;
+  color: grey;
+}
+
+.card-listing {
+  font-size: clamp(25px, 2vw, 30px);
+  text-align: center;
+}
+
+.stats-container {
+  background-color: #f0f0f0;
+  padding: 5px;
+  border-radius: 5px;
+  margin-top: 5px;
+  font-size: clamp(20px, 1.5vw, 25px);
+}
+
+.stat-item {
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.stat-value {
+  font-style: italic;
+}

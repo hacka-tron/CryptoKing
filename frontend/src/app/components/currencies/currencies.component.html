@@ -1,13 +1,13 @@
 <div class="spinner-border" role="status" *ngIf="isLoading"></div>
 <div class="coinListings">
   <div name="favorites" *ngIf="favoriteProps.length > 0">
-    <h2 class="ml-3 text-warning">Favorites</h2>
+    <h2 class="text-warning">Favorites</h2>
     <currencies-list (favoritePropAdded)=onFavoritePropAdded($event) (favoritePropRemoved)=onFavoritePropRemoved($event)
       [currencyProps]="favoriteProps" [userIsAuthenticated]="userIsAuthenticated" [curWalletId]="curWalletId"
       [dollarAmmount]="dollarAmmount"></currencies-list>
   </div>
   <div name="currencies">
-    <h2 class="ml-3">Currencies</h2>
+    <h2>Currencies</h2>
     <currencies-list (favoritePropAdded)=onFavoritePropAdded($event) (favoritePropRemoved)=onFavoritePropRemoved($event)
       [currencyProps]="currencyProps" [userIsAuthenticated]="userIsAuthenticated" [curWalletId]="curWalletId"
       [dollarAmmount]="dollarAmmount"></currencies-list>

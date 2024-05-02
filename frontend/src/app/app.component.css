@@ -1,0 +1,4 @@
+* {
+    font-family: JerseyFont;
+    font-size: clamp(20px, 2vw, 25px);
+}
