@@ -1,10 +1,12 @@
 import { BrowserModule } from "@angular/platform-browser";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgModule } from "@angular/core";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { FormsModule } from "@angular/forms";
 import { ChartModule } from "primeng/chart";
 import { MatDialogModule } from "@angular/material/dialog";
 import { AppRoutingModule } from ".//app-routing.module";
+import {MatExpansionModule} from '@angular/material/expansion';
 
 import { CurrencyService } from "./services/currency.service";
 
@@ -48,6 +50,8 @@ import { ModalModule } from "ngx-bootstrap/modal";
     FormsModule,
     ChartModule,
     MatDialogModule,
+    BrowserAnimationsModule,
+    MatExpansionModule,
     TabsModule.forRoot(),
     ModalModule.forRoot()
   ],
@@ -58,4 +62,4 @@ import { ModalModule } from "ngx-bootstrap/modal";
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }
