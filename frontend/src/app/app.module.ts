@@ -5,10 +5,12 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { FormsModule } from "@angular/forms";
 import { ChartModule } from "primeng/chart";
 import { MatDialogModule } from "@angular/material/dialog";
-import { AppRoutingModule } from ".//app-routing.module";
+import { AppRoutingModule } from "./app-routing.module";
 import {MatExpansionModule} from '@angular/material/expansion';
 
 import { CurrencyService } from "./services/currency.service";
+import { CustomRouteReuseStrategy } from "./custom-route-reuse-strategy";
+import { RouterModule, RouteReuseStrategy } from '@angular/router';
 
 import { AppComponent } from "./app.component";
 import { NavbarComponent } from "./components/navbar/navbar.component";
@@ -52,13 +54,15 @@ import { ModalModule } from "ngx-bootstrap/modal";
     MatDialogModule,
     BrowserAnimationsModule,
     MatExpansionModule,
+    RouterModule,
     TabsModule.forRoot(),
     ModalModule.forRoot()
   ],
   providers: [
     CurrencyService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy }
   ],
   bootstrap: [AppComponent]
 })

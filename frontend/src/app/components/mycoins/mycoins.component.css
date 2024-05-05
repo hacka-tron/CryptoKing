@@ -5,9 +5,18 @@
 #walletOptions{
   text-align: center;
   display: inline-block;
+  margin-bottom: 20px;
 }
 
 #walletSelect {
   width: 50%;
+  margin: auto;
+}
+
+.form-control {
+  font-size: clamp(20px, 2vw, 25px);
+}
+
+.spinner-border {
   margin: auto;
 }

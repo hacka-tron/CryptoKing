@@ -33,7 +33,7 @@ export class MycoinsComponent implements OnInit, OnDestroy {
   constructor(
     private currencyService: CurrencyService,
     private modalService: BsModalService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.currencyService.getCurrencies();
@@ -87,18 +87,14 @@ export class MycoinsComponent implements OnInit, OnDestroy {
     }
   }
   onChangeName(form: NgForm, walletId: string) {
-    if (confirm("Are You Sure?")) {
-      this.isLoading = true;
-      this.currencyService.changeWalletName(form.value.name, this.curWallet.id);
-      this.walletName.hide();
-    }
+    this.isLoading = true;
+    this.currencyService.changeWalletName(form.value.name, this.curWallet.id);
+    this.walletName.hide();
   }
   onCreateWallet(form: NgForm) {
-    if (confirm("Are You Sure?")) {
-      this.isLoading = true;
-      this.currencyService.createWallet(form.value.name, 1000);
-      this.creatingWallet.hide();
-    }
+    this.isLoading = true;
+    this.currencyService.createWallet(form.value.name, 1000);
+    this.creatingWallet.hide();
   }
   onChangeWallet(newCurWallet: Wallet) {
     this.isLoading = true;

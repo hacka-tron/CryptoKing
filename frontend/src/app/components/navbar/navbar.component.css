@@ -1,8 +1,12 @@
 .container {
     vertical-align: middle;
-    font-size: clamp(20px,1.5vw, 25px)
+    font-size: clamp(20px,2vw, 25px)
 }
 
 .navbar-brand {
     font-size: clamp(25px,2vw, 30px)
+}
+
+.dropdown-menu {
+    font-size: clamp(15px,1.5vw, 20px);
 }

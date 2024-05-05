@@ -13,10 +13,10 @@
       <button class="btn-danger btn input-group-btn" (click) = "onDeleteWallet()">
           <i class="fa fa-trash"></i>
         </button>
+        <button class="btn-success btn input-group-btn" (click)="openCreateWallet(addWallet)">
+          <i class="fa fa-plus"></i>
+        </button>
     </div>
-    <button class="btn-dark btn" (click)="openCreateWallet(addWallet)">
-      New Wallet
-    </button>
   </div>
   <ng-template #addWallet>
     <div class="modal-header">
