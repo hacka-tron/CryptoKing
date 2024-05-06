@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  backendApiUrl: "http://cryptoking.us-east-2.elasticbeanstalk.com/api"
+  backendApiUrl: "https://7ojhfgpvbeuge3jj4lzjkbs2va0ronaw.lambda-url.us-east-2.on.aws/"
 
 };

@@ -18,7 +18,7 @@ const dev_uri = `mongodb://localhost:${process.env.MONGO_LOCAL_PORT}/${db_name}?
 
 mongoose
   .connect(
-    process.env.ENV == 'prod' ? prod_uri : dev_uri,
+    process.env.ENV != 'dev' ? prod_uri : dev_uri,
   )
   .then(() => {
     console.log("Connected to database!");
