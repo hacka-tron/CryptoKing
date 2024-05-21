@@ -1,0 +1,1 @@
+{"ast":null,"code":"export const environment = {\n  production: true,\n  backendApiUrl: \"https://7ojhfgpvbeuge3jj4lzjkbs2va0ronaw.lambda-url.us-east-2.on.aws/\"\n};","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}

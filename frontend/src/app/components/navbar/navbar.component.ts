@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, HostListener } from "@angular/core";
 import { AuthService } from "../../services/auth.service";
 import { Subscription } from "rxjs";
 
@@ -8,12 +8,15 @@ import { Subscription } from "rxjs";
   styleUrls: ["./navbar.component.css"]
 })
 export class NavbarComponent implements OnInit, OnDestroy {
-  userIsAuthenticated = false;
-  userName: string;
+  MOBILE_WINDOW_SIZE = 992;
   private authListnerSubs: Subscription;
   private userListnerSubs: Subscription;
+  userIsAuthenticated = false;
+  userName: string;
 
-  constructor(private authService: AuthService) {}
+  isNavbarCollapsed = true;
+
+  constructor(private authService: AuthService) { }
 
   ngOnInit() {
     //Certains tabs should/shouldn't appear when loged in/out
@@ -38,5 +41,18 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   onLogout() {
     this.authService.logout();
+  }
+
+  toggleNavbar() {
+    if (window.innerWidth <= this.MOBILE_WINDOW_SIZE) {
+      this.isNavbarCollapsed = !this.isNavbarCollapsed;
+    }
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    if (window.innerWidth >this.MOBILE_WINDOW_SIZE && !this.isNavbarCollapsed){
+      this.toggleNavbar();
+    }
   }
 }

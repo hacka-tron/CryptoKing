@@ -1,12 +1,119 @@
 .container {
     vertical-align: middle;
-    font-size: clamp(20px,2vw, 25px)
 }
 
 .navbar-brand {
-    font-size: clamp(25px,2vw, 30px)
+    font-size: clamp(25px, 2vw, 30px)
 }
 
 .dropdown-menu {
-    font-size: clamp(15px,1.5vw, 20px);
+    font-size: clamp(15px, 1.5vw, 20px);
+}
+
+.dropdown-item:active {
+    background-color: #dc3545;
+}
+
+.navbar-toggler,
+.navbar-toggler:focus,
+.navbar-toggler:active,
+.navbar-toggler:focus-visible {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    /* To remove any potential box shadow */
+}
+
+.navbar-toggler .navbar-toggler-icon-custom {
+    display: inline-block;
+    position: relative;
+    width: 25px;
+    height: 20px;
+    background-image: none;
+}
+
+.navbar-toggler .navbar-toggler-icon-custom span {
+    display: block;
+    position: absolute;
+    height: 3px;
+    width: 100%;
+    background: var(--bs-navbar-color);
+    border-radius: 3px;
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar-collapse {
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: height 0.3s ease, opacity 0.3s ease;
+}
+
+/* When the navbar is shown */
+.navbar-collapse.show {
+    height: 100vh;
+    height: auto;
+    opacity: 1;
+    font-size: clamp(25px, 2vw, 30px)
+}
+
+@media (min-width: 992px) {
+    .navbar-collapse {
+        font-size: clamp(20px, 2vw, 25px);
+        height: auto !important;
+        opacity: 1 !important;
+        overflow: visible !important;
+        display: flex !important;
+    }
+}
+
+.navbar-toggler.collapsed .navbar-toggler-icon-custom span {
+    background: white;
+}
+
+.navbar-toggler .navbar-toggler-icon-custom span:nth-child(1) {
+    top: 0;
+}
+
+.navbar-toggler .navbar-toggler-icon-custom span:nth-child(2) {
+    top: 10px;
+}
+
+.navbar-toggler .navbar-toggler-icon-custom span:nth-child(3) {
+    top: 20px;
+}
+
+.navbar-toggler.collapsed .navbar-toggler-icon-custom span:nth-child(1) {
+    transform: rotate(45deg);
+    top: 10px;
+}
+
+.navbar-toggler.collapsed .navbar-toggler-icon-custom span:nth-child(2) {
+    opacity: 0;
+}
+
+.navbar-toggler.collapsed .navbar-toggler-icon-custom span:nth-child(3) {
+    transform: rotate(-45deg);
+    top: 10px;
+}
+
+.navbar {
+    position: relative;
+    z-index: 1000;
+    /* Ensure navbar is above the overlay */
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+.overlay.active {
+    display: flex;
 }

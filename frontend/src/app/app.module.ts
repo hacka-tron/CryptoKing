@@ -7,6 +7,10 @@ import { ChartModule } from "primeng/chart";
 import { MatDialogModule } from "@angular/material/dialog";
 import { AppRoutingModule } from "./app-routing.module";
 import {MatExpansionModule} from '@angular/material/expansion';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 import { CurrencyService } from "./services/currency.service";
 import { CustomRouteReuseStrategy } from "./custom-route-reuse-strategy";
@@ -55,6 +59,10 @@ import { ModalModule } from "ngx-bootstrap/modal";
     BrowserAnimationsModule,
     MatExpansionModule,
     RouterModule,
+    MatToolbarModule,
+    MatMenuModule,
+    MatIconModule,
+    MatButtonModule,
     TabsModule.forRoot(),
     ModalModule.forRoot()
   ],
