@@ -45,7 +45,7 @@ jobs:
         run: |
           ls
           cd frontend
-          npm install -g @angular/cli
+          npm install -g @angular/cli@17.3.6
           npm install
           ng build --configuration production
           
