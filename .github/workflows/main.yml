@@ -52,4 +52,4 @@ jobs:
       # 6. Copy to S3 bucket.
       - name: Copy to S3 Bucket
         run: |
-          aws s3 cp ./frontend/dist/cryptoKing/* s3://cryptokingapp.online --recursive
+          aws s3 sync ./frontend/dist/cryptoKing/ s3://cryptokingapp.online
