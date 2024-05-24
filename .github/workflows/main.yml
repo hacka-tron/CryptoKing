@@ -2,7 +2,11 @@
 name: Continuous Deployment
 
 # This allows manual start of the pipeline as needed.
-on: workflow_dispatch
+on: 
+  workflow_dispatch
+  push:
+    paths:
+      - 'frontend/**'
 
 # The list of jobs to run 
 jobs:
